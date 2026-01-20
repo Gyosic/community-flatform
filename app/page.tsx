@@ -1,65 +1,130 @@
-import Image from "next/image";
+import { Clock, MessageSquare, TrendingUp } from "lucide-react";
+import Link from "next/link";
+import { redirect } from "next/navigation";
+import { MainLayout } from "@/components/layout";
+import { Badge } from "@/components/ui/badge";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { getSession } from "@/lib/auth/session";
+import { getBoards } from "@/lib/data/boards";
+import { isInstalled } from "@/lib/data/site-settings";
 
-export default function Home() {
+export default async function Home() {
+  // 설치 여부 확인
+  const installed = await isInstalled();
+  if (!installed) {
+    redirect("/setup");
+  }
+
+  const boards = await getBoards();
+  const session = await getSession();
+
+  // 세션이 있으면 user 객체 생성
+  const user = session
+    ? {
+        id: session.user_id,
+        name: session.name,
+        role: session.role,
+      }
+    : null;
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
+    <MainLayout
+      siteName="Community"
+      user={user}
+      boards={boards}
+      showSidebar={true}
+      showFooter={true}
+    >
+      <div className="flex flex-col gap-12">
+        {/* 환영 섹션 - 시선 흐름 시작점 */}
+        <section className="flex flex-col gap-4">
+          <h1 className="text-3xl font-bold tracking-tight">
+            커뮤니티에 오신 것을 환영합니다
           </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+          <p className="text-base text-muted-foreground">
+            자유롭게 의견을 나누고 정보를 공유하는 공간입니다.
           </p>
+        </section>
+
+        {/* 통계 - 정보 전달 */}
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between pb-2">
+              <CardTitle className="text-sm font-medium">총 게시판</CardTitle>
+              <MessageSquare className="size-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{boards.length}</div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between pb-2">
+              <CardTitle className="text-sm font-medium">총 게시글</CardTitle>
+              <TrendingUp className="size-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">
+                {boards.reduce((sum, b) => sum + b.posts_count, 0)}
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between pb-2">
+              <CardTitle className="text-sm font-medium">오늘 게시글</CardTitle>
+              <Clock className="size-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">
+                {boards.reduce((sum, b) => sum + b.today_posts_count, 0)}
+              </div>
+            </CardContent>
+          </Card>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
+
+        {/* 게시판 목록 - 행동 유도 */}
+        <section className="flex flex-col gap-6">
+          <h2 className="text-xl font-semibold tracking-tight">게시판 목록</h2>
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+            {boards.map((board) => (
+              <Link key={board.id} href={`/board/${board.slug}`}>
+                <Card className="transition-colors hover:bg-accent cursor-pointer">
+                  <CardHeader>
+                    <div className="flex items-center justify-between gap-2">
+                      <CardTitle className="text-base">{board.name}</CardTitle>
+                      <Badge
+                        variant={
+                          board.type === "notice" ? "default" : "secondary"
+                        }
+                      >
+                        {board.type}
+                      </Badge>
+                    </div>
+                    <CardDescription>{board.description}</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                      <span>게시글 {board.posts_count}</span>
+                      {board.today_posts_count > 0 && (
+                        <span className="text-primary font-medium">
+                          오늘 +{board.today_posts_count}
+                        </span>
+                      )}
+                    </div>
+                  </CardContent>
+                </Card>
+              </Link>
+            ))}
+          </div>
+        </section>
+      </div>
+    </MainLayout>
   );
 }
