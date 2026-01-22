@@ -119,10 +119,10 @@ export function PostList({ boardId }: { boardId: string }) {
 
 ```bash
 # 마이그레이션 파일 생성
-pnpm drizzle-kit generate
+npx drizzle-kit generate
 
 # 마이그레이션 실행
-pnpm drizzle-kit push
+npx drizzle-kit push
 ```
 
 ## 환경 설정

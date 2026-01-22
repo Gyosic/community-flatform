@@ -3,7 +3,7 @@
 ## 1. 의존성 설치
 
 ```bash
-pnpm install
+npm install
 ```
 
 ## 2. 환경변수 설정
@@ -17,47 +17,45 @@ cp .env.example .env
 필수 환경변수:
 - `DATABASE_URL` 또는 개별 DB 설정 (HOST, PORT, USER, PASSWORD, NAME)
 - `REDIS_URL` 또는 개별 Redis 설정
-- `SESSION_SECRET` (랜덤한 문자열로 변경)
-- `JWT_SECRET` (랜덤한 문자열로 변경)
+- `AUTH_SECRET` (랜덤한 문자열로 변경)
+
+시스템 관리자 설정:
+- `SYSADMIN_EMAIL` - 시스템 관리자 이메일
+- `SYSADMIN_USERNAME` - 시스템 관리자 이름
+- `SYSADMIN_PASSWORD` - 시스템 관리자 비밀번호 (8자 이상 권장)
 
 ## 3. 데이터베이스 마이그레이션
 
 ```bash
 # 마이그레이션 파일 생성 및 자동 실행
-pnpm db:generate
+npm run db:generate
 ```
 
 이 명령어는:
 1. `drizzle-kit generate` - 마이그레이션 파일 생성
 2. `drizzle-kit push` - 데이터베이스에 마이그레이션 적용
 
-## 4. 초기 데이터 생성
+## 4. 개발 서버 실행
 
 ```bash
-pnpm db:seed
-```
-
-이 명령어는 다음을 생성합니다:
-- 기본 역할 4개 (관리자, 운영진, 일반회원, 신규회원)
-- 각 역할별 권한 설정
-- 사이트 기본 설정
-- 관리자 계정
-- 샘플 게시판 4개 (공지사항, 자유게시판, Q&A, 갤러리)
-
-### 기본 관리자 계정
-
-- **이메일**: admin@example.com
-- **비밀번호**: admin123!
-
-⚠️ **프로덕션 환경에서는 반드시 비밀번호를 변경하세요!**
-
-## 5. 개발 서버 실행
-
-```bash
-pnpm dev
+npm run dev
 ```
 
 브라우저에서 [http://localhost:3000](http://localhost:3000)을 열어 확인하세요.
+
+첫 실행 시 자동으로:
+1. 기본 역할이 생성됩니다 (시스템관리자, 관리자, 운영진, 일반회원, 신규회원)
+2. 환경변수에 설정된 시스템 관리자 계정이 생성됩니다
+
+## 5. 관리자 계정 생성
+
+시스템 관리자로 로그인 후 `/system` 페이지에서 관리자 계정을 생성합니다.
+
+1. 시스템 관리자 계정으로 로그인
+2. `/system` 페이지 접속
+3. 관리자 계정 정보 입력 후 생성
+
+관리자 계정은 1개만 생성할 수 있습니다.
 
 ## 데이터베이스 관리
 
@@ -66,7 +64,7 @@ pnpm dev
 데이터베이스를 시각적으로 관리할 수 있는 Drizzle Studio를 실행합니다:
 
 ```bash
-pnpm db:studio
+npm run db:studio
 ```
 
 브라우저에서 `https://local.drizzle.studio`를 엽니다.
@@ -80,10 +78,7 @@ pnpm db:studio
 psql -U username -d cafe_service -c "DROP SCHEMA public CASCADE; CREATE SCHEMA public;"
 
 # 2. 마이그레이션 다시 실행
-pnpm db:generate
-
-# 3. 초기 데이터 생성
-pnpm db:seed
+npm run db:generate
 ```
 
 ## 트러블슈팅
@@ -131,7 +126,7 @@ docker-compose up -d redis
 마이그레이션 파일이 충돌하는 경우:
 
 1. `drizzle/` 디렉토리 삭제
-2. `pnpm db:generate` 다시 실행
+2. `npm run db:generate` 다시 실행
 
 ### bcrypt 설치 오류
 
@@ -151,5 +146,5 @@ npm install --global windows-build-tools
 그 후 다시 설치:
 
 ```bash
-pnpm install
+npm install
 ```
