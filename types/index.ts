@@ -85,3 +85,15 @@ export interface UploadedFile {
   fileUrl: string;
   thumbnailUrl?: string;
 }
+
+export interface FieldModel {
+  name: string;
+  type: string;
+  placeholder?: string;
+  desc?: string;
+  accept?: string[];
+  multiple?: boolean;
+  readOnly?: boolean;
+  unique?: boolean;
+  [key: string]: unknown;
+}
