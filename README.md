@@ -18,7 +18,7 @@
 - **데이터베이스**: PostgreSQL + Drizzle ORM
 - **캐시**: Redis (ioredis)
 - **언어**: TypeScript
-- **패키지 관리**: pnpm
+- **패키지 관리**: npm
 
 ## 시작하기
 
@@ -38,7 +38,7 @@ cp .env.example .env
 ### 2. 의존성 설치
 
 ```bash
-pnpm install
+npm install
 ```
 
 ### 3. 데이터베이스 설정
@@ -48,14 +48,14 @@ pnpm install
 docker-compose up -d
 
 # 데이터베이스 마이그레이션
-pnpm drizzle-kit generate
-pnpm drizzle-kit push
+npx drizzle-kit generate
+npx drizzle-kit push
 ```
 
 ### 4. 개발 서버 실행
 
 ```bash
-pnpm dev
+npm run dev
 ```
 
 브라우저에서 [http://localhost:3000](http://localhost:3000)을 열어 확인하세요.
@@ -82,25 +82,25 @@ cafe-service/
 
 ```bash
 # 개발 서버
-pnpm dev
+npm run dev
 
 # 빌드
-pnpm build
+npm run build
 
 # 프로덕션 실행
-pnpm start
+npm run start
 
 # 코드 검사
-pnpm lint
+npm run lint
 
 # 코드 포맷팅
-pnpm format
+npm run format
 
 # 데이터베이스 마이그레이션 생성
-pnpm drizzle-kit generate
+npx drizzle-kit generate
 
 # 데이터베이스 마이그레이션 실행
-pnpm drizzle-kit push
+npx drizzle-kit push
 ```
 
 ## 배포
@@ -117,9 +117,9 @@ docker run -p 3000:3000 --env-file .env cafe-service
 
 ### 전통적 배포
 
-1. 프로젝트 빌드: `pnpm build`
+1. 프로젝트 빌드: `npm run build`
 2. 환경변수 설정
-3. PM2 또는 systemd로 실행: `pnpm start`
+3. PM2 또는 systemd로 실행: `npm run start`
 
 ## 라이선스
 
