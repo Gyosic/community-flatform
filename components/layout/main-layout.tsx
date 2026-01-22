@@ -3,7 +3,7 @@
 import { useState } from "react";
 import type { Board } from "@/lib/db/schema";
 import { Footer } from "./footer";
-import { Header } from "./header";
+import { Header } from "./Header";
 import { Sidebar } from "./sidebar";
 
 interface MainLayoutProps {

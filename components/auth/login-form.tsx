@@ -3,13 +3,17 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { signIn } from "next-auth/react";
 import { useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import z from "zod";
 import { TemplateFormItem } from "@/components/form/TemplateFormItem";
+import { GoogleButton } from "@/components/shared/GoogleButton";
+import { NaverButton } from "@/components/shared/NaverButton";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { FieldSeparator } from "@/components/ui/field";
 import { Form, FormField } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -53,27 +57,35 @@ export function LoginForm() {
     }
   });
 
+  const oauthSignin = async (provider: "google" | "naver") => {
+    await signIn(provider);
+  };
+
   return (
     <div className="container max-w-md">
       <div className="flex flex-col gap-8">
-        {/* 로고 */}
-        <Link href="/" className="flex items-center justify-center gap-2">
-          <span className="font-bold text-xl">Community</span>
-        </Link>
-
-        <div className="flex flex-col gap-2 text-center">
-          <h1 className="font-bold text-3xl tracking-tight">로그인</h1>
-          <p className="text-muted-foreground text-sm">계정에 로그인하세요</p>
-        </div>
-
         <Card>
-          <CardHeader>
-            <CardTitle>로그인</CardTitle>
-            <CardDescription>이메일과 비밀번호를 입력하세요</CardDescription>
+          <CardHeader className="text-center">
+            <CardTitle className="text-xl">Welcome!</CardTitle>
+            <CardDescription>소셜 로그인으로 빠르게 시작하세요</CardDescription>
           </CardHeader>
           <CardContent>
             <Form {...form}>
               <form onSubmit={onSubmit} className="flex flex-col gap-4">
+                <GoogleButton
+                  type="button"
+                  text="구글로 시작하기"
+                  variant="outline"
+                  onClick={() => oauthSignin("google")}
+                />
+                <NaverButton
+                  type="button"
+                  text="네이버로 시작하기"
+                  onClick={() => oauthSignin("naver")}
+                />
+                <FieldSeparator className="*:data-[slot=field-separator-content]:bg-card">
+                  Or continue with
+                </FieldSeparator>
                 {Object.entries(fieldModel).map(([fieldKey, fieldModel]) => {
                   return (
                     <FormField
