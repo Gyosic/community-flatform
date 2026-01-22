@@ -57,10 +57,7 @@ const authConfig = {
   },
   callbacks: {
     jwt: async ({ token, user }) => ({ ...token, ...user }),
-    session: ({
-      session,
-      token: { refresh_token, password, salt, ...user },
-    }): Session => {
+    session: ({ session, token: { refresh_token, password, salt, ...user } }): Session => {
       if (!!user?.image && !(user.image as string).includes("http"))
         Object.assign(user, { image: `/api/files${user.image}` });
 

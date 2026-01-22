@@ -2,6 +2,7 @@
 
 import { Bell, LogOut, Menu, Search, Settings, User } from "lucide-react";
 import Link from "next/link";
+import { signOut } from "next-auth/react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -23,50 +24,38 @@ interface HeaderProps {
   } | null;
 }
 
-export function Header({
-  siteName = "Community",
-  onMenuToggle,
-  user,
-}: HeaderProps) {
+export function Header({ siteName = "Community", onMenuToggle, user }: HeaderProps) {
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur">
       <div className="container flex h-16 items-center gap-4">
         {/* 모바일 메뉴 토글 */}
-        <Button
-          variant="ghost"
-          size="icon"
-          className="md:hidden"
-          onClick={onMenuToggle}
-        >
+        <Button variant="ghost" size="icon" className="md:hidden" onClick={onMenuToggle}>
           <Menu className="size-5" />
           <span className="sr-only">메뉴</span>
         </Button>
 
         {/* 로고 */}
         <Link href="/" className="flex items-center gap-2">
-          <span className="text-lg font-semibold">{siteName}</span>
+          <span className="font-semibold text-lg">{siteName}</span>
         </Link>
 
         {/* 네비게이션 */}
-        <nav className="hidden md:flex items-center gap-6 flex-1">
-          <Link
-            href="/"
-            className="text-sm font-medium transition-colors hover:text-primary"
-          >
+        <nav className="hidden flex-1 items-center gap-6 md:flex">
+          <Link href="/" className="font-medium text-sm transition-colors hover:text-primary">
             홈
           </Link>
           <Link
             href="/boards"
-            className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+            className="font-medium text-muted-foreground text-sm transition-colors hover:text-foreground"
           >
             게시판
           </Link>
         </nav>
 
         {/* 검색 */}
-        <div className="flex-1 md:flex-initial md:w-64">
+        <div className="flex-1 md:w-64 md:flex-initial">
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
+            <Search className="absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
             <Input type="search" placeholder="검색..." className="pl-10" />
           </div>
         </div>
@@ -90,7 +79,7 @@ export function Header({
                 <DropdownMenuContent align="end" className="w-56">
                   <DropdownMenuLabel>
                     <div className="flex flex-col gap-1">
-                      <p className="text-sm font-medium">{user.name}</p>
+                      <p className="font-medium text-sm">{user.name}</p>
                     </div>
                   </DropdownMenuLabel>
                   <DropdownMenuSeparator />
@@ -112,13 +101,7 @@ export function Header({
                     </>
                   )}
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem
-                    className="text-destructive"
-                    onClick={async () => {
-                      await fetch("/api/auth/logout", { method: "POST" });
-                      window.location.href = "/";
-                    }}
-                  >
+                  <DropdownMenuItem className="text-destructive" onClick={() => signOut()}>
                     <LogOut className="mr-2 size-4" />
                     로그아웃
                   </DropdownMenuItem>

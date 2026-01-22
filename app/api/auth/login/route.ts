@@ -1,9 +1,10 @@
-import { eq } from "drizzle-orm";
+import { eq, getTableColumns } from "drizzle-orm";
 import { type NextRequest, NextResponse } from "next/server";
 import { verifyPassword } from "@/lib/auth/password";
-import { createSession } from "@/lib/auth/session";
 import { db } from "@/lib/db";
-import { users } from "@/lib/db/schema";
+import { roles, users } from "@/lib/db/schema";
+
+const userColumns = getTableColumns(users);
 
 export async function POST(request: NextRequest) {
   try {
@@ -11,17 +12,15 @@ export async function POST(request: NextRequest) {
     const { email, password } = body;
 
     if (!email || !password) {
-      return NextResponse.json(
-        { error: "이메일과 비밀번호를 입력하세요" },
-        { status: 400 },
-      );
+      return NextResponse.json({ error: "이메일과 비밀번호를 입력하세요" }, { status: 400 });
     }
 
     // 사용자 조회
     const [user] = await db
-      .select()
+      .select({ ...userColumns, roles })
       .from(users)
       .where(eq(users.email, email))
+      .leftJoin(roles, eq(roles.id, users.role_id))
       .limit(1);
 
     if (!user) {
@@ -43,18 +42,12 @@ export async function POST(request: NextRequest) {
 
     // 계정 상태 확인
     if (!user.is_active) {
-      return NextResponse.json(
-        { error: "비활성화된 계정입니다" },
-        { status: 403 },
-      );
+      return NextResponse.json({ error: "비활성화된 계정입니다" }, { status: 403 });
     }
 
     if (user.is_banned) {
       return NextResponse.json({ error: "정지된 계정입니다" }, { status: 403 });
     }
-
-    // 세션 생성
-    await createSession(user.id);
 
     return NextResponse.json({
       success: true,
@@ -62,13 +55,11 @@ export async function POST(request: NextRequest) {
         id: user.id,
         email: user.email,
         name: user.name,
+        role: user?.roles?.name,
       },
     });
   } catch (error) {
     console.error("Login error:", error);
-    return NextResponse.json(
-      { error: "로그인 중 오류가 발생했습니다" },
-      { status: 500 },
-    );
+    return NextResponse.json({ error: "로그인 중 오류가 발생했습니다" }, { status: 500 });
   }
 }

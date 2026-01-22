@@ -53,16 +53,9 @@ export const app = {
   baseurl: getEnv("BASEURL", "http://localhost:3000"),
 };
 
-// 인증 설정
-export const auth = {
-  sessionSecret: getEnv("SESSION_SECRET", "change-me-in-production"),
-  jwtSecret: getEnv("JWT_SECRET", "change-me-in-production"),
-  jwtExpiresIn: getEnv("JWT_EXPIRES_IN", "7d"),
-};
-
 export const sysadmin = {
   email: getEnv("SYSADMIN_EMAIL", "admin@example.com"),
-  username: getEnv("SYSADMIN_USERNAME", "admin"),
+  name: getEnv("SYSADMIN_NAME", "admin"),
   password: getEnv("SYSADMIN_PASSWORD", "admin123!"),
 };
 
@@ -70,10 +63,7 @@ export const sysadmin = {
 export const upload = {
   maxFileSize: getEnvNumber("MAX_FILE_SIZE", 10485760), // 10MB
   uploadDir: getEnv("UPLOAD_DIR", "./uploads"),
-  allowedFileTypes: getEnv(
-    "ALLOWED_FILE_TYPES",
-    "image/*,application/pdf",
-  ).split(","),
+  allowedFileTypes: getEnv("ALLOWED_FILE_TYPES", "image/*,application/pdf").split(","),
 };
 
 // AI 기능 설정
@@ -86,6 +76,5 @@ export type PostgresqlType = typeof postgresql;
 export type RedisType = typeof redis;
 export type AppType = typeof app;
 export type Sysadmin = typeof sysadmin;
-export type AuthType = typeof auth;
 export type UploadType = typeof upload;
 export type AiType = typeof ai;

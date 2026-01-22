@@ -11,10 +11,8 @@ class CustomCredentialsSignin extends CredentialsSignin {
   }
 }
 
-export const authorize = async (
-  credentials: Partial<Record<"email" | "password", unknown>>,
-) => {
-  const signinRes = await fetch(new URL("/api/signin", app.baseurl), {
+export const authorize = async (credentials: Partial<Record<"email" | "password", unknown>>) => {
+  const signinRes = await fetch(new URL("/api/auth/login", app.baseurl), {
     method: "POST",
     headers: new Headers({ "Content-Type": "application/json" }),
     body: JSON.stringify({
