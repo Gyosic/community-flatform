@@ -1,16 +1,13 @@
+import { eq } from "drizzle-orm";
 import { db } from "@/lib/db";
 import { boards } from "@/lib/db/schema";
-import { eq } from "drizzle-orm";
 
 /**
  * 모든 게시판 목록 가져오기
  */
 export async function getBoards() {
   try {
-    const result = await db
-      .select()
-      .from(boards)
-      .orderBy(boards.sort_order, boards.created_at);
+    const result = await db.select().from(boards).orderBy(boards.sort_order, boards.created_at);
 
     return result;
   } catch (error) {
@@ -24,11 +21,7 @@ export async function getBoards() {
  */
 export async function getBoardBySlug(slug: string) {
   try {
-    const result = await db
-      .select()
-      .from(boards)
-      .where(eq(boards.slug, slug))
-      .limit(1);
+    const result = await db.select().from(boards).where(eq(boards.slug, slug)).limit(1);
 
     return result[0] || null;
   } catch (error) {

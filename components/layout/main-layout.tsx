@@ -1,20 +1,19 @@
 "use client";
 
 import { useState } from "react";
+import type { Board } from "@/lib/db/schema";
+import { Footer } from "./footer";
 import { Header } from "./header";
 import { Sidebar } from "./sidebar";
-import { Footer } from "./footer";
-import type { Board } from "@/lib/db/schema";
 
 interface MainLayoutProps {
   children: React.ReactNode;
   siteName?: string;
   user?: {
     id: string;
-    username: string;
-    display_name: string;
+    name: string;
     role: string;
-  } | null;
+  };
   boards?: Board[];
   showSidebar?: boolean;
   showFooter?: boolean;
@@ -27,7 +26,7 @@ interface MainLayoutProps {
 export function MainLayout({
   children,
   siteName = "Community",
-  user = null,
+  user,
   boards = [],
   showSidebar = true,
   showFooter = true,
@@ -36,25 +35,15 @@ export function MainLayout({
 
   return (
     <div className="flex min-h-screen flex-col">
-      <Header
-        siteName={siteName}
-        user={user}
-        onMenuToggle={() => setSidebarOpen(!sidebarOpen)}
-      />
+      <Header siteName={siteName} user={user} onMenuToggle={() => setSidebarOpen(!sidebarOpen)} />
 
       <div className="flex flex-1">
         {showSidebar && (
-          <Sidebar
-            boards={boards}
-            isOpen={sidebarOpen}
-            onClose={() => setSidebarOpen(false)}
-          />
+          <Sidebar boards={boards} isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
         )}
 
         <main className="flex-1">
-          <div className="container py-8">
-            {children}
-          </div>
+          <div className="container py-8">{children}</div>
         </main>
       </div>
 

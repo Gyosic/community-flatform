@@ -49,11 +49,7 @@ export const getCache = async <T>(key: string): Promise<T | null> => {
 };
 
 // 캐시 설정 (TTL: 초 단위)
-export const setCache = async <T>(
-  key: string,
-  value: T,
-  ttl?: number
-): Promise<void> => {
+export const setCache = async <T>(key: string, value: T, ttl?: number): Promise<void> => {
   try {
     const data = JSON.stringify(value);
     if (ttl) {

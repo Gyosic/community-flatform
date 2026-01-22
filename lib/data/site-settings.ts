@@ -6,10 +6,7 @@ import { siteSettings } from "@/lib/db/schema";
  */
 export async function getSiteSettings() {
   try {
-    const result = await db
-      .select()
-      .from(siteSettings)
-      .limit(1);
+    const result = await db.select().from(siteSettings).limit(1);
 
     return result[0] || null;
   } catch (error) {

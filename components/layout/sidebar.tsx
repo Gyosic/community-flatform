@@ -41,17 +41,14 @@ export function Sidebar({ boards = [], isOpen = true, onClose }: SidebarProps) {
     <>
       {/* 모바일 오버레이 */}
       {isOpen && (
-        <div
-          className="fixed inset-0 z-40 bg-background/80 md:hidden"
-          onClick={onClose}
-        />
+        <div className="fixed inset-0 z-40 bg-background/80 md:hidden" onClick={onClose} />
       )}
 
       {/* 사이드바 */}
       <aside
         className={cn(
           "fixed top-16 left-0 z-40 h-[calc(100vh-4rem)] w-64 border-r bg-background transition-transform md:sticky md:translate-x-0",
-          isOpen ? "translate-x-0" : "-translate-x-full"
+          isOpen ? "translate-x-0" : "-translate-x-full",
         )}
       >
         <div className="flex flex-col h-full">
@@ -72,7 +69,7 @@ export function Sidebar({ boards = [], isOpen = true, onClose }: SidebarProps) {
                   "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
                   pathname === "/"
                     ? "bg-secondary text-secondary-foreground"
-                    : "text-muted-foreground hover:bg-secondary/50 hover:text-foreground"
+                    : "text-muted-foreground hover:bg-secondary/50 hover:text-foreground",
                 )}
               >
                 <Home className="size-4" />
@@ -85,7 +82,7 @@ export function Sidebar({ boards = [], isOpen = true, onClose }: SidebarProps) {
                   "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
                   pathname === "/trending"
                     ? "bg-secondary text-secondary-foreground"
-                    : "text-muted-foreground hover:bg-secondary/50 hover:text-foreground"
+                    : "text-muted-foreground hover:bg-secondary/50 hover:text-foreground",
                 )}
               >
                 <TrendingUp className="size-4" />
@@ -112,7 +109,7 @@ export function Sidebar({ boards = [], isOpen = true, onClose }: SidebarProps) {
                           "flex items-center justify-between rounded-lg px-3 py-2 text-sm font-medium transition-colors",
                           isActive
                             ? "bg-secondary text-secondary-foreground"
-                            : "text-muted-foreground hover:bg-secondary/50 hover:text-foreground"
+                            : "text-muted-foreground hover:bg-secondary/50 hover:text-foreground",
                         )}
                       >
                         <div className="flex items-center gap-3">

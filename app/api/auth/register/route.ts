@@ -1,7 +1,6 @@
 import { eq } from "drizzle-orm";
 import { type NextRequest, NextResponse } from "next/server";
 import { hashPassword } from "@/lib/auth/password";
-import { createSession } from "@/lib/auth/session";
 import { db, writeDb } from "@/lib/db";
 import { roles, users } from "@/lib/db/schema";
 
@@ -12,53 +11,29 @@ export async function POST(request: NextRequest) {
 
     // 유효성 검사
     if (!email || !name || !password) {
-      return NextResponse.json(
-        { error: "필수 항목을 모두 입력하세요" },
-        { status: 400 },
-      );
+      return NextResponse.json({ error: "필수 항목을 모두 입력하세요" }, { status: 400 });
     }
 
     if (password.length < 8) {
-      return NextResponse.json(
-        { error: "비밀번호는 최소 8자 이상이어야 합니다" },
-        { status: 400 },
-      );
+      return NextResponse.json({ error: "비밀번호는 최소 8자 이상이어야 합니다" }, { status: 400 });
     }
 
     // 이메일 중복 확인
-    const [existingEmail] = await db
-      .select()
-      .from(users)
-      .where(eq(users.email, email))
-      .limit(1);
+    const [existingEmail] = await db.select().from(users).where(eq(users.email, email)).limit(1);
 
     if (existingEmail) {
-      return NextResponse.json(
-        { error: "이미 사용 중인 이메일입니다" },
-        { status: 409 },
-      );
+      return NextResponse.json({ error: "이미 사용 중인 이메일입니다" }, { status: 409 });
     }
 
     // 아이디 중복 확인
-    const [existingUsername] = await db
-      .select()
-      .from(users)
-      .where(eq(users.name, name))
-      .limit(1);
+    const [existingUsername] = await db.select().from(users).where(eq(users.name, name)).limit(1);
 
     if (existingUsername) {
-      return NextResponse.json(
-        { error: "이미 사용 중인 아이디입니다" },
-        { status: 409 },
-      );
+      return NextResponse.json({ error: "이미 사용 중인 아이디입니다" }, { status: 409 });
     }
 
     // 신규회원 역할 찾기
-    const [newbieRole] = await db
-      .select()
-      .from(roles)
-      .where(eq(roles.name, "newbie"))
-      .limit(1);
+    const [newbieRole] = await db.select().from(roles).where(eq(roles.name, "newbie")).limit(1);
 
     if (!newbieRole) {
       return NextResponse.json({ error: "역할 설정 오류" }, { status: 500 });
@@ -83,9 +58,6 @@ export async function POST(request: NextRequest) {
       })
       .returning();
 
-    // 세션 생성 (자동 로그인)
-    await createSession(newUser.id);
-
     return NextResponse.json({
       success: true,
       user: {
@@ -96,9 +68,6 @@ export async function POST(request: NextRequest) {
     });
   } catch (error) {
     console.error("Register error:", error);
-    return NextResponse.json(
-      { error: "회원가입 중 오류가 발생했습니다" },
-      { status: 500 },
-    );
+    return NextResponse.json({ error: "회원가입 중 오류가 발생했습니다" }, { status: 500 });
   }
 }
