@@ -2,7 +2,7 @@
 
 import type { LucideIcon } from "lucide-react";
 import { createElement } from "react";
-import { useDynamicIcon } from "@/components/shared/LucideIcon";
+
 import {
   FormControl,
   FormDescription,
@@ -10,6 +10,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { useDynamicIcon } from "@/hooks/use-lucide-icon";
 import { cn } from "@/lib/utils";
 
 interface FormItemWrapperProps {
