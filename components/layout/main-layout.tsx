@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import { AppSidebar } from "@/components/shared/AppSidebar";
+import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import type { Board } from "@/lib/db/schema";
 import { Footer } from "./footer";
 import { Header } from "./Header";
@@ -34,20 +36,19 @@ export function MainLayout({
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
-    <div className="flex min-h-screen flex-col">
-      <Header siteName={siteName} user={user} onMenuToggle={() => setSidebarOpen(!sidebarOpen)} />
+    <SidebarProvider>
+      <AppSidebar />
+      <SidebarInset>
+        <Header siteName={siteName} user={user} onMenuToggle={() => setSidebarOpen(!sidebarOpen)} />
 
-      <div className="flex flex-1">
-        {showSidebar && (
-          <Sidebar boards={boards} isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
-        )}
+        <div className="flex flex-1">
+          <main className="flex-1">
+            <div className="container py-8">{children}</div>
+          </main>
+        </div>
 
-        <main className="flex-1">
-          <div className="container py-8">{children}</div>
-        </main>
-      </div>
-
-      <Footer siteName={siteName} showFooter={showFooter} />
-    </div>
+        <Footer siteName={siteName} showFooter={showFooter} />
+      </SidebarInset>
+    </SidebarProvider>
   );
 }
