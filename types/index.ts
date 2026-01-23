@@ -97,3 +97,13 @@ export interface FieldModel {
   unique?: boolean;
   [key: string]: unknown;
 }
+
+export interface MenuItem {
+  id: string;
+  title: string;
+  order?: number;
+  parent_id?: string;
+  icon?: string;
+  url?: string;
+  children?: MenuItem[];
+}
