@@ -1,6 +1,6 @@
 "use client";
 
-import { Bell, LogOut, Menu, Search, Settings, User } from "lucide-react";
+import { Bell, LogOut, Search, Settings, User } from "lucide-react";
 import Link from "next/link";
 import { signOut } from "next-auth/react";
 import { Button } from "@/components/ui/button";
@@ -13,12 +13,10 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
-import { Separator } from "@/components/ui/separator";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 
 interface HeaderProps {
   siteName?: string;
-  onMenuToggle?: () => void;
   user?: {
     id: string;
     name: string;
@@ -26,13 +24,12 @@ interface HeaderProps {
   } | null;
 }
 
-export function Header({ siteName = "Community", onMenuToggle, user }: HeaderProps) {
+export function Header({ siteName = "Community", user }: HeaderProps) {
   return (
     <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
       <div className="flex w-full items-center justify-between gap-2 px-4">
-        <div className="flex">
+        <div className="flex items-center">
           <SidebarTrigger className="-ml-1" />
-          <Separator orientation="vertical" className="mr-2 data-[orientation=vertical]:h-4" />
         </div>
 
         <div className="flex items-center gap-2">

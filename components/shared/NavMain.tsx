@@ -30,7 +30,9 @@ function TreeMenuItem({ menu, depth = 0 }: TreeMenuItemProps) {
       <SidebarMenuItem>
         <SidebarMenuButton>
           {iconComponent && createElement(iconComponent, { className: "size-4" })}
-          <span>{menu.title}</span>
+          <a href={menu?.url ?? "#"}>
+            <span>{menu.title}</span>
+          </a>
         </SidebarMenuButton>
 
         {hasChildren ? (
@@ -49,7 +51,9 @@ function TreeMenuItem({ menu, depth = 0 }: TreeMenuItemProps) {
     <SidebarMenuSubItem>
       <SidebarMenuSubButton>
         {iconComponent && createElement(iconComponent, { className: "size-4" })}
-        <span>{menu.title}</span>
+        <a href={menu?.url ?? "#"}>
+          <span>{menu.title}</span>
+        </a>
         <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
       </SidebarMenuSubButton>
 
