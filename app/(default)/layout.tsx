@@ -30,7 +30,7 @@ export default async function DefaultLayout({
 
         <div className="flex flex-1">
           <main className="flex-1">
-            <div className="container py-8">{children}</div>
+            <div className="container h-full p-2">{children}</div>
           </main>
         </div>
 
