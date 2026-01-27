@@ -9,29 +9,19 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { map } from "es-toolkit/compat";
 import {
   ArrowDown,
   ArrowUp,
-  ChevronRight,
   EllipsisVertical,
   GitBranchPlus,
   GripVertical,
   Save,
   Trash2,
 } from "lucide-react";
-import {
-  ActionDispatch,
-  createElement,
-  MouseEventHandler,
-  SetStateAction,
-  useEffect,
-  useState,
-} from "react";
-import { type ControllerRenderProps, Resolver, useForm } from "react-hook-form";
+import { createElement, useEffect, useState } from "react";
+import { type ControllerRenderProps } from "react-hook-form";
 import { toast } from "sonner";
-import z from "zod";
 import { TemplateFormItem } from "@/components/form/TemplateFormItem";
 import {
   AlertDialog,
@@ -50,8 +40,6 @@ import {
   DropdownMenuContent,
   DropdownMenuGroup,
   DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Label } from "@/components/ui/label";
@@ -183,7 +171,7 @@ function TreeMenuItem({
                 {isMobile && (
                   <>
                     <DropdownMenuItem
-                      onClick={(e) => {
+                      onClick={(e: MouseEvent) => {
                         e.stopPropagation();
                         onMoveUp?.(menu.id);
                       }}
@@ -192,7 +180,7 @@ function TreeMenuItem({
                       위로 이동
                     </DropdownMenuItem>
                     <DropdownMenuItem
-                      onClick={(e) => {
+                      onClick={(e: MouseEvent) => {
                         e.stopPropagation();
                         onMoveDown?.(menu.id);
                       }}
@@ -203,7 +191,7 @@ function TreeMenuItem({
                   </>
                 )}
                 <DropdownMenuItem
-                  onClick={(e) => {
+                  onClick={(e: MouseEvent) => {
                     e.stopPropagation();
                     handleClickAddChild();
                   }}
@@ -212,7 +200,7 @@ function TreeMenuItem({
                   하위 메뉴추가
                 </DropdownMenuItem>
                 <DropdownMenuItem
-                  onClick={(e) => {
+                  onClick={(e: MouseEvent) => {
                     e.stopPropagation();
                     setDeleteDialogOpen(true);
                   }}
@@ -289,7 +277,7 @@ function TreeMenuItem({
         id={menu.id}
         render={({ attributes, listeners }) => (
           <SidebarMenuSubItem className="me-0 pe-0">
-            <SidebarMenuSubButton asChild onClick={() => handleClickSelectMenu()}>
+            <SidebarMenuSubButton asChild onClick={(e) => handleClickSelectMenu()}>
               <div className="flex justify-between">
                 <div className="flex items-center gap-2">
                   {isMobile ? null : (
@@ -317,7 +305,7 @@ function TreeMenuItem({
                       {isMobile && (
                         <>
                           <DropdownMenuItem
-                            onClick={(e) => {
+                            onClick={(e: MouseEvent) => {
                               e.stopPropagation();
                               onMoveUp?.(menu.id);
                             }}
@@ -326,7 +314,7 @@ function TreeMenuItem({
                             위로 이동
                           </DropdownMenuItem>
                           <DropdownMenuItem
-                            onClick={(e) => {
+                            onClick={(e: MouseEvent) => {
                               e.stopPropagation();
                               onMoveDown?.(menu.id);
                             }}
@@ -337,7 +325,7 @@ function TreeMenuItem({
                         </>
                       )}
                       <DropdownMenuItem
-                        onClick={(e) => {
+                        onClick={(e: MouseEvent) => {
                           e.stopPropagation();
                           handleClickAddChild();
                         }}
@@ -346,7 +334,7 @@ function TreeMenuItem({
                         하위 메뉴추가
                       </DropdownMenuItem>
                       <DropdownMenuItem
-                        onClick={(e) => {
+                        onClick={(e: MouseEvent) => {
                           e.stopPropagation();
                           setDeleteDialogOpen(true);
                         }}
