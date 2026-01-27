@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { SessionProvider } from "next-auth/react";
 import { ThemeProvider } from "next-themes";
+import { LoadingOverlay } from "@/components/shared/LoadingOverlay";
 import { Toaster } from "@/components/ui/sonner";
 
 const geistSans = Geist({
@@ -42,6 +43,7 @@ export default function RootLayout({
           </ThemeProvider>
         </SessionProvider>
         <Toaster />
+        <LoadingOverlay />
       </body>
     </html>
   );
