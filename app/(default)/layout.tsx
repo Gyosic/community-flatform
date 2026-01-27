@@ -6,6 +6,14 @@ import { app } from "@/config";
 import { auth } from "@/lib/auth";
 import { MenuGroup, MenuItem } from "@/types";
 
+const getMenu = async () => {
+  const res = await fetch(new URL("/api/menu", app.baseurl), { method: "GET" });
+
+  const data = await res.json();
+  const { items = [] } = data || {};
+
+  return items;
+};
 export default async function DefaultLayout({
   children,
 }: Readonly<{
@@ -26,10 +34,9 @@ export default async function DefaultLayout({
       }
     : undefined;
 
-  const res = await fetch(new URL("/api/menu", app.baseurl), { method: "GET" });
-  const { _id, items } = await res.json();
+  const menu: MenuItem[] = await getMenu();
 
-  const userMenu: MenuGroup = { label: "메뉴", menu: items as MenuItem[] };
+  const userMenu: MenuGroup = { label: "메뉴", menu };
 
   return (
     <SidebarProvider>
