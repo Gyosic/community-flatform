@@ -1,4 +1,4 @@
-import { pgTable, text, timestamp, jsonb, uuid } from "drizzle-orm/pg-core";
+import { jsonb, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
 
 /**
  * 사이트 전역 설정 테이블
@@ -11,18 +11,8 @@ export const siteSettings = pgTable("site_settings", {
   // 기본 정보
   site_name: text("site_name").notNull().default("My Community"),
   site_description: text("site_description"),
-  site_url: text("site_url"),
   logo_url: text("logo_url"),
   favicon_url: text("favicon_url"),
-
-  // 레이아웃 설정 (JSONB)
-  layout_config: jsonb("layout_config").$type<{
-    header_visible: boolean;
-    footer_visible: boolean;
-    sidebar_position: "left" | "right" | "none";
-    navigation_style: "top" | "side";
-    home_layout: string[]; // 홈페이지 블록 순서
-  }>(),
 
   // 테마 설정 (JSONB)
   theme_config: jsonb("theme_config").$type<{
@@ -30,8 +20,6 @@ export const siteSettings = pgTable("site_settings", {
     secondary_color: string;
     dark_mode: boolean;
     dark_mode_default: boolean;
-    button_style: "rounded" | "square" | "pill";
-    font_size: "small" | "medium" | "large";
   }>(),
 
   // 권한 설정 (JSONB)

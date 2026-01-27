@@ -45,6 +45,12 @@ export function AppSidebar({ userMenu, user, ...props }: AppSidebarProps) {
     label: "시스템",
     menu: [
       {
+        id: "system_settings",
+        title: "환경설정",
+        url: "/system/settings",
+        icon: "Settings",
+      },
+      {
         id: "system_menu",
         title: "메뉴관리",
         url: "/system/menu",
@@ -100,7 +106,6 @@ export function AppSidebar({ userMenu, user, ...props }: AppSidebarProps) {
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={menu} />
-        {/*        <NavProjects projects={data.projects} /> */}
       </SidebarContent>
       <SidebarFooter>
         <NavUser user={user} />

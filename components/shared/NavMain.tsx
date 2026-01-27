@@ -24,6 +24,8 @@ function TreeMenuItem({ menu, depth = 0 }: TreeMenuItemProps) {
   const iconComponent = useDynamicIcon(menu.icon);
   const hasChildren = !!menu.children && menu.children.length > 0;
 
+  if (menu.hidden) return null;
+
   if (depth === 0) {
     // 최상위 레벨
     return (
