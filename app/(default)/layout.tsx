@@ -2,7 +2,9 @@ import { Footer } from "@/components/layout/footer";
 import { Header } from "@/components/layout/Header";
 import { AppSidebar } from "@/components/shared/AppSidebar";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
+import { app } from "@/config";
 import { auth } from "@/lib/auth";
+import { MenuGroup, MenuItem } from "@/types";
 
 export default async function DefaultLayout({
   children,
@@ -19,12 +21,19 @@ export default async function DefaultLayout({
         id: session?.user.id ?? "",
         name: session?.user.name ?? "",
         role: session?.user.role ?? "",
+        email: session?.user.email ?? "",
+        avatar: "",
       }
     : undefined;
 
+  const res = await fetch(new URL("/api/menu", app.baseurl), { method: "GET" });
+  const { _id, items } = await res.json();
+
+  const userMenu: MenuGroup = { label: "메뉴", menu: items as MenuItem[] };
+
   return (
     <SidebarProvider>
-      <AppSidebar />
+      <AppSidebar userMenu={userMenu} user={user} />
       <SidebarInset>
         <Header siteName={siteName} user={user} />
 

@@ -20,9 +20,9 @@ import {
 } from "@/components/ui/sidebar";
 
 export function NavUser({
-  user,
+  user = { name: "김유저", email: "user@example.com", avatar: "" },
 }: {
-  user: {
+  user?: {
     name: string;
     email: string;
     avatar: string;

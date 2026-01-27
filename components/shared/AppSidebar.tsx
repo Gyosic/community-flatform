@@ -13,6 +13,7 @@ import {
   SquareTerminal,
 } from "lucide-react";
 import * as React from "react";
+import { useMemo } from "react";
 import { NavMain } from "@/components/shared/NavMain";
 // import { NavMain } from "@/components/nav-main";
 // import { NavProjects } from "@/components/nav-projects";
@@ -28,82 +29,57 @@ import {
   SidebarMenuItem,
   SidebarRail,
 } from "@/components/ui/sidebar";
+import { MenuGroup } from "@/types";
 
-// This is sample data.
-const data = {
-  user: {
-    name: "shadcn",
-    email: "m@example.com",
-    avatar: "/avatars/shadcn.jpg",
-  },
-  teams: [
-    {
-      name: "Acme Inc",
-      logo: GalleryVerticalEnd,
-      plan: "Enterprise",
-    },
-    {
-      name: "Acme Corp.",
-      logo: AudioWaveform,
-      plan: "Startup",
-    },
-    {
-      name: "Evil Corp.",
-      logo: Command,
-      plan: "Free",
-    },
-  ],
-  system: [
-    {
-      label: "시스템",
-      menu: [
-        {
-          id: "system_menu",
-          title: "메뉴관리",
-          url: "/system/menu",
-          icon: "SquareMenu",
-        },
-        {
-          id: "system_theme",
-          title: "테마관리",
-          url: "/system/theme",
-          icon: "Palette",
-        },
-        {
-          id: "system_role",
-          title: "역할관리",
-          url: "/system/role",
-          icon: "PersonStanding",
-        },
-        {
-          id: "system_user",
-          title: "사용자관리",
-          url: "/system/user",
-          icon: "UserCog",
-        },
-      ],
-    },
-  ],
-  projects: [
-    {
-      name: "Design Engineering",
-      url: "#",
-      icon: Frame,
-    },
-    {
-      name: "Sales & Marketing",
-      url: "#",
-      icon: PieChart,
-    },
-    {
-      name: "Travel",
-      url: "#",
-      icon: Map,
-    },
-  ],
-};
+interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
+  userMenu: MenuGroup;
+  user?: {
+    email: string;
+    name: string;
+    avatar: string;
+  };
+}
 
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+export function AppSidebar({ userMenu, user, ...props }: AppSidebarProps) {
+  const systemMenuGroup = {
+    label: "시스템",
+    menu: [
+      {
+        id: "system_menu",
+        title: "메뉴관리",
+        url: "/system/menu",
+        icon: "SquareMenu",
+      },
+      {
+        id: "system_page",
+        title: "페이지관리",
+        url: "/system/page",
+        icon: "Wallpaper",
+      },
+      {
+        id: "system_theme",
+        title: "테마관리",
+        url: "/system/theme",
+        icon: "Palette",
+      },
+      {
+        id: "system_role",
+        title: "역할관리",
+        url: "/system/role",
+        icon: "PersonStanding",
+      },
+      {
+        id: "system_user",
+        title: "사용자관리",
+        url: "/system/user",
+        icon: "UserCog",
+      },
+    ],
+  };
+  const menu = useMemo<MenuGroup[]>(() => {
+    return [userMenu, systemMenuGroup];
+  }, [userMenu]);
+
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
@@ -123,11 +99,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={data.system} />
+        <NavMain items={menu} />
         {/*        <NavProjects projects={data.projects} /> */}
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={data.user} />
+        <NavUser user={user} />
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>

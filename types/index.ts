@@ -106,4 +106,10 @@ export interface MenuItem {
   icon?: string;
   url?: string;
   children?: MenuItem[];
+  hidden?: boolean;
+}
+
+export interface MenuGroup {
+  label: string;
+  menu: MenuItem[];
 }

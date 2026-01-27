@@ -28,9 +28,9 @@ function TreeMenuItem({ menu, depth = 0 }: TreeMenuItemProps) {
     // 최상위 레벨
     return (
       <SidebarMenuItem>
-        <SidebarMenuButton>
-          {iconComponent && createElement(iconComponent, { className: "size-4" })}
+        <SidebarMenuButton asChild>
           <a href={menu?.url ?? "#"}>
+            {iconComponent && createElement(iconComponent, { className: "size-4" })}
             <span>{menu.title}</span>
           </a>
         </SidebarMenuButton>
@@ -49,9 +49,9 @@ function TreeMenuItem({ menu, depth = 0 }: TreeMenuItemProps) {
   // 하위 레벨 (depth > 0)
   return (
     <SidebarMenuSubItem>
-      <SidebarMenuSubButton>
-        {iconComponent && createElement(iconComponent, { className: "size-4" })}
+      <SidebarMenuSubButton asChild>
         <a href={menu?.url ?? "#"}>
+          {iconComponent && createElement(iconComponent, { className: "size-4" })}
           <span>{menu.title}</span>
         </a>
         <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
