@@ -24,6 +24,7 @@
     "@hookform/resolvers": "^5.2.2",
     "@radix-ui/react-avatar": "^1.1.11",
     "@radix-ui/react-collapsible": "^1.1.12",
+    "@radix-ui/react-context-menu": "^2.2.16",
     "@radix-ui/react-dialog": "^1.1.15",
     "@radix-ui/react-dropdown-menu": "^2.1.16",
     "@radix-ui/react-label": "^2.1.8",
@@ -70,6 +71,7 @@
     "typescript": "^5",
     "zod": "^4.3.5",
     "zustand": "^5.0.10",
-    "@radix-ui/react-context-menu": "^2.2.16"
+    "@radix-ui/react-alert-dialog": "^1.1.15",
+    "vaul": "^1.1.2"
   }
 }
