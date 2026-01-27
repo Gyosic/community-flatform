@@ -7,6 +7,8 @@ export function useDynamicIcon(icon: string | LucideIcon | undefined) {
   const [iconComponent, setIconComponent] = useState<LucideIcon | null>(null);
 
   useEffect(() => {
+    if (!icon) return setIconComponent(null);
+
     if (typeof icon === "string") {
       // 문자열이면 동적으로 import
       import("lucide-react")

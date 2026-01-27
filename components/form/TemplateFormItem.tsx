@@ -5,6 +5,7 @@ import { BooleanField } from "@/components/form/fields/BooleanField";
 import { ComboboxField } from "@/components/form/fields/ComboboxField";
 import { DateField } from "@/components/form/fields/DateField";
 import { FieldField } from "@/components/form/fields/FileField";
+import { IconField } from "@/components/form/fields/IconField";
 import { NumberField } from "@/components/form/fields/NumberField";
 import { PasswordField } from "@/components/form/fields/PasswordField";
 import { RadioField } from "@/components/form/fields/RadioField";
@@ -55,6 +56,8 @@ export function TemplateFormItem<T extends FieldValues, K extends FieldPath<T>>(
       return <RatingField {...props} />;
     case "tag":
       return <TagField {...props} />;
+    case "icon":
+      return <IconField {...props} />;
     default:
       return <TextField {...props} />;
   }

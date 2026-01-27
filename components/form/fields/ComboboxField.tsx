@@ -43,7 +43,7 @@ export function ComboboxField<T extends FieldValues, K extends FieldPath<T>>({
         multiple={fieldModel.multiple}
         placeholder={fieldModel.placeholder || "입력하세요"}
         readOnly={fieldModel.readOnly}
-        searchInput={fieldModel.searchInput}
+        searchInput={fieldModel.searchInput as boolean}
         items={enums as Item[]}
         className="flex-1"
         contentCls="left-0"
