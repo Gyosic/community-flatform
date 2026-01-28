@@ -12,6 +12,7 @@ export function FieldField<T extends FieldValues, K extends FieldPath<T>>({
   isForm = true,
   labelPosition = "top",
   labelCls,
+  className,
 }: TemplateFormItemProps<T, K>) {
   const [inputValue, setInputValue] = useState(field.value);
   const accept = useMemo(() => {
@@ -43,6 +44,7 @@ export function FieldField<T extends FieldValues, K extends FieldPath<T>>({
           value={inputValue}
           onChange={field.onChange}
           accept={accept}
+          className={fieldModel.inputCls}
         />
       </div>
     </FormItemWrapper>

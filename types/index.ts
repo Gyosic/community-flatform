@@ -95,6 +95,7 @@ export interface FieldModel {
   multiple?: boolean;
   readOnly?: boolean;
   unique?: boolean;
+  inputCls?: string;
   [key: string]: unknown;
 }
 

@@ -29,7 +29,11 @@ export function TagField<T extends FieldValues, K extends FieldPath<T>>({
       icon={fieldModel.icon as LucideIcon}
     >
       <div className="flex w-full flex-col items-end">
-        <TagInput value={inputValue} onChange={field.onChange} />
+        <TagInput
+          value={inputValue}
+          onChange={field.onChange}
+          placeholder={fieldModel.placeholder}
+        />
       </div>
     </FormItemWrapper>
   );

@@ -6,11 +6,11 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
-interface TagInputProps {
+interface TagInputProps extends React.ComponentProps<"input"> {
   value?: string[];
   onChange?: (...args: unknown[]) => void;
 }
-export function TagInput({ value, onChange }: TagInputProps) {
+export function TagInput({ value, onChange, ...props }: TagInputProps) {
   const [tags, setTags] = useState<string[]>(value || []);
   const [newTag, setNewTag] = useState("");
   const addTag = () => {
@@ -46,6 +46,7 @@ export function TagInput({ value, onChange }: TagInputProps) {
       </div>
       <div className="flex gap-2">
         <Input
+          {...props}
           id="tags"
           value={newTag}
           onChange={(e) => setNewTag(e.target.value)}
@@ -55,11 +56,10 @@ export function TagInput({ value, onChange }: TagInputProps) {
               addTag();
             }
           }}
-          placeholder="Add tag"
           className="flex-1"
         />
-        <Button type="button" onClick={addTag} variant="outline" size="sm">
-          Add
+        <Button type="button" onClick={addTag} variant="outline">
+          추가
         </Button>
       </div>
     </div>

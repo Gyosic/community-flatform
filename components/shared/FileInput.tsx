@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Carousel, CarouselContent, CarouselItem } from "@/components/ui/carousel";
 import { Dropzone, DropzoneContent, DropzoneEmptyState } from "@/components/ui/shadcn-io/dropzone";
+import { cn } from "@/lib/utils";
 import { FileType } from "@/lib/zod/file";
 
 interface FileInputProps {
@@ -15,8 +16,15 @@ interface FileInputProps {
   multiple?: boolean;
   value?: File[];
   onChange?: (...args: unknown[]) => void;
+  className?: string;
 }
-export default function FileInput({ accept, value = [], multiple, onChange }: FileInputProps) {
+export default function FileInput({
+  accept,
+  value = [],
+  multiple,
+  onChange,
+  className,
+}: FileInputProps) {
   const [files, setFiles] = useState<File[] | FileType[] | undefined>(value);
   const [filePreview, setFilePreview] = useState<File[]>([]);
 
@@ -88,7 +96,7 @@ export default function FileInput({ accept, value = [], multiple, onChange }: Fi
   }, [files]);
 
   return (
-    <div className="relative flex w-full flex-col gap-2">
+    <div className={cn("relative flex w-full flex-col gap-2", className)}>
       <Dropzone
         multiple={multiple}
         maxFiles={10}
@@ -96,45 +104,48 @@ export default function FileInput({ accept, value = [], multiple, onChange }: Fi
         onDrop={handleDrop}
         onError={console.error}
         src={files as File[]}
+        className="flex-1"
       >
         <DropzoneEmptyState />
         <DropzoneContent></DropzoneContent>
       </Dropzone>
 
-      <Carousel className="w-full">
-        <CarouselContent className="ml-0">
-          {filePreview?.map((file, index) => (
-            <CarouselItem key={index} className="basis-full pl-0">
-              <div className="w-full">
-                <Card className="relative">
-                  <CardContent className="flex h-[180px] p-0">
-                    <div className="absolute top-0 flex w-full items-center justify-between ps-2">
-                      <span className="font-bold">{index + 1}</span>
-                      <Button
-                        variant="ghost"
-                        type="button"
-                        size="icon"
-                        className="hover:bg-transparent hover:text-red-500"
-                        onClick={() => handleRemove(file.name)}
-                      >
-                        <X className="h-4 w-4" />
-                      </Button>
-                    </div>
+      {filePreview && !!filePreview.length && (
+        <Carousel className="w-full flex-1">
+          <CarouselContent className="ml-0">
+            {filePreview?.map((file, index) => (
+              <CarouselItem key={index} className="basis-full pl-0">
+                <div className="w-full">
+                  <Card className="relative">
+                    <CardContent className="flex h-45 p-0">
+                      <div className="absolute top-0 flex w-full items-center justify-between ps-2">
+                        <span className="font-bold">{index + 1}</span>
+                        <Button
+                          variant="ghost"
+                          type="button"
+                          size="icon"
+                          className="hover:bg-transparent hover:text-red-500"
+                          onClick={() => handleRemove(file.name)}
+                        >
+                          <X className="h-4 w-4" />
+                        </Button>
+                      </div>
 
-                    <Image
-                      alt="Preview"
-                      className="h-full w-full object-contain"
-                      src={file.src}
-                      width={1000}
-                      height={1000}
-                    />
-                  </CardContent>
-                </Card>
-              </div>
-            </CarouselItem>
-          ))}
-        </CarouselContent>
-      </Carousel>
+                      <Image
+                        alt="Preview"
+                        className="h-full w-full object-contain"
+                        src={file.src}
+                        width={1000}
+                        height={1000}
+                      />
+                    </CardContent>
+                  </Card>
+                </div>
+              </CarouselItem>
+            ))}
+          </CarouselContent>
+        </Carousel>
+      )}
     </div>
   );
 }

@@ -28,6 +28,7 @@ export function BooleanField<T extends FieldValues, K extends FieldPath<T>>({
           checked={field.value}
           onCheckedChange={field.onChange}
           id={fieldModel.name}
+          disabled={fieldModel.readOnly}
         />
       </div>
     </FormItemWrapper>
