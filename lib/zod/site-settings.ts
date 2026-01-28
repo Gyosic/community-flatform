@@ -100,7 +100,9 @@ export const featureSchema = z.object({
   ai_features: z
     .boolean()
     .describe(JSON.stringify({ name: "AI 기능", readOnly: true, desc: "추후 업데이트 예정" })),
-  real_time_notifications: z.boolean().describe(JSON.stringify({ name: "실시간 알림" })),
+  real_time_notifications: z
+    .boolean()
+    .describe(JSON.stringify({ name: "실시간 알림", desc: "알림 기능 여부를 설정합니다." })),
   file_upload: z.boolean().describe(
     JSON.stringify({
       name: "파일 업로드",
@@ -126,7 +128,7 @@ export const seoSchema = z.object({
     JSON.stringify({
       name: "검색 키워드",
       type: "tag",
-      placeholder: "입력 후 엔터 또는 추가 버튼 클릭하여 태그를 추가하세요.",
+      placeholder: "입력 후 엔터 또는 추가 버튼 클릭하세요.",
       desc: "검색 사이트에 노출되는 키워드",
     }),
   ),
@@ -137,7 +139,8 @@ export const seoSchema = z.object({
       JSON.stringify({
         name: "소셜 공유 이미지",
         type: "file",
-        desc: "링크 공유 시 표시되는 이미지",
+        desc: "링크 공유 시 표시되는 이미지. 파일형식: PNG, JPG, JPEG",
+        accept: ["png", "jpg", "jpeg"],
       }),
     ),
 });
