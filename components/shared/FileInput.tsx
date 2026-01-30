@@ -17,6 +17,7 @@ interface FileInputProps {
   value?: File[];
   onChange?: (...args: unknown[]) => void;
   className?: string;
+  unoptimized?: boolean;
 }
 export default function FileInput({
   accept,
@@ -24,6 +25,7 @@ export default function FileInput({
   multiple,
   onChange,
   className,
+  unoptimized = false,
 }: FileInputProps) {
   const [files, setFiles] = useState<File[] | FileType[] | undefined>(value);
   const [filePreview, setFilePreview] = useState<File[]>([]);
@@ -135,8 +137,9 @@ export default function FileInput({
                         alt="Preview"
                         className="h-full w-full object-contain"
                         src={file.src}
-                        width={1000}
-                        height={1000}
+                        width={0}
+                        height={0}
+                        unoptimized={unoptimized}
                       />
                     </CardContent>
                   </Card>

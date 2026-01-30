@@ -45,6 +45,7 @@ export function FieldField<T extends FieldValues, K extends FieldPath<T>>({
           onChange={field.onChange}
           accept={accept}
           className={fieldModel.inputCls}
+          unoptimized={fieldModel.unoptimized}
         />
       </div>
     </FormItemWrapper>

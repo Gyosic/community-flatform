@@ -14,10 +14,6 @@ export function LoadingOverlay() {
     return unsubscribe;
   }, []);
 
-  useEffect(() => {
-    console.log("LoadingOverlay state:", state);
-  }, [state]);
-
   if (!state.isVisible) return null;
 
   return (

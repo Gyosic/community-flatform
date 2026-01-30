@@ -1,4 +1,5 @@
 import { jsonb, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
+import { FileType } from "@/lib/zod/file";
 
 /**
  * 사이트 전역 설정 테이블
@@ -9,17 +10,17 @@ export const siteSettings = pgTable("site_settings", {
   id: uuid("id").defaultRandom().primaryKey(),
 
   // 기본 정보
-  site_name: text("site_name").notNull().default("My Community"),
-  site_description: text("site_description"),
-  logo_url: text("logo_url"),
-  favicon_url: text("favicon_url"),
+  site_name: text("site_name").notNull(),
+  site_description: text("site_description").default(""),
+  logo: jsonb("logo").$type<FileType[]>(),
+  favicon: jsonb("favicon").$type<FileType[]>(),
 
   // 테마 설정 (JSONB)
   theme_config: jsonb("theme_config").$type<{
-    primary_color: string;
-    secondary_color: string;
+    primary_color?: string;
+    secondary_color?: string;
     dark_mode: boolean;
-    dark_mode_default: boolean;
+    dark_mode_default: "light" | "dark";
   }>(),
 
   // 권한 설정 (JSONB)
@@ -27,16 +28,14 @@ export const siteSettings = pgTable("site_settings", {
     allow_registration: boolean;
     require_email_verification: boolean;
     default_role: string;
-    level_up_criteria: {
-      posts_count?: number;
-      comments_count?: number;
-      days_active?: number;
-    };
+    level_up_posts_count: number;
+    level_up_comments_count: number;
+    level_up_days_active: number;
   }>(),
 
   // 기능 토글
-  features_enabled: jsonb("features_enabled").$type<{
-    ai_features: boolean;
+  features_config: jsonb("features_config").$type<{
+    ai_features?: boolean;
     real_time_notifications: boolean;
     file_upload: boolean;
     anonymous_posts: boolean;
@@ -47,7 +46,7 @@ export const siteSettings = pgTable("site_settings", {
     meta_title?: string;
     meta_description?: string;
     meta_keywords?: string[];
-    og_image?: string;
+    og_image?: FileType[];
   }>(),
 
   // 타임스탬프
