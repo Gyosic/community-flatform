@@ -120,8 +120,8 @@ export default function Combobox<T extends Item>({
       <PopoverContent
         className={cn(contentCls, "w-[var(--radix-popover-trigger-width)] p-0")}
         align="start"
-        onWheel={(e: MouseEvent) => e.stopPropagation()}
-        onTouchMove={(e: MouseEvent) => e.stopPropagation()}
+        onWheel={(e) => e.stopPropagation()}
+        onTouchMove={(e) => e.stopPropagation()}
       >
         <Command>
           {searchInput && <CommandInput />}
