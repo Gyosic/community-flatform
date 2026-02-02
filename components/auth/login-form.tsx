@@ -15,8 +15,6 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { FieldSeparator } from "@/components/ui/field";
 import { Form, FormField } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { login } from "@/lib/auth/actions";
 import { FieldModel } from "@/types";
 
@@ -47,11 +45,12 @@ export function LoginForm() {
     setLoading(true);
 
     try {
-      await login(data.email, data.password);
+      const { error } = await login(data.email, data.password);
 
-      router.push("/");
+      if (error) toast.error(error.message.error);
+      else router.push("/");
     } catch {
-      toast("로그인에 실패했습니다");
+      toast.error("로그인에 실패했습니다");
     } finally {
       setLoading(false);
     }
