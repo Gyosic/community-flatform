@@ -49,19 +49,12 @@ export const themeSchema = z.object({
     .string()
     .optional()
     .describe(JSON.stringify({ name: "보조 컬러", desc: "사이트의 보조 색상을 설정합니다." })),
-  dark_mode: z.boolean().describe(
-    JSON.stringify({
-      name: "다크모드 지원",
-      desc: "다크모드를 지원 여부를 설정합니다.",
-      default: false,
-    }),
-  ),
-  dark_mode_default: z.enum(["light", "dark"]).describe(
+  default_theme: z.enum(["light", "dark", "system"]).describe(
     JSON.stringify({
       name: "기본 테마",
-      enums: { 기본모드: "light", 다크모드: "dark" },
-      desc: "기본 테마를 설정합니다. 다크모드를 지원하지 않을 경우 기본모드만 가능합니다.",
-      default: "light",
+      enums: { 라이트: "light", 다크: "dark", 시스템: "system" },
+      desc: "사이트의 기본 테마를 설정합니다. 시스템 설정 시 사용자 기기의 테마를 따릅니다.",
+      default: "system",
     }),
   ),
 });

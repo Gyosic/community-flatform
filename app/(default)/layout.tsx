@@ -4,6 +4,7 @@ import { AppSidebar } from "@/components/shared/AppSidebar";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { app } from "@/config";
 import { auth } from "@/lib/auth";
+import { getSiteSettings } from "@/lib/data/site-settings";
 import { MenuGroup, MenuItem } from "@/types";
 
 const getMenu = async () => {
@@ -19,7 +20,10 @@ export default async function DefaultLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const siteName = "Community";
+  const siteSettings = await getSiteSettings();
+  const siteName = siteSettings?.site_name || "Community";
+  const siteDescription = siteSettings?.site_description || "커뮤니티 플랫폼";
+  const logo = siteSettings?.logo?.[0] || null;
   const showFooter = true;
   const session = await auth();
 
@@ -40,7 +44,7 @@ export default async function DefaultLayout({
 
   return (
     <SidebarProvider>
-      <AppSidebar userMenu={userMenu} user={user} />
+      <AppSidebar userMenu={userMenu} user={user} siteName={siteName} logo={logo} />
       <SidebarInset>
         <Header siteName={siteName} user={user} />
 
@@ -50,7 +54,7 @@ export default async function DefaultLayout({
           </main>
         </div>
 
-        <Footer siteName={siteName} showFooter={showFooter} />
+        <Footer siteName={siteName} siteDescription={siteDescription} showFooter={showFooter} />
       </SidebarInset>
     </SidebarProvider>
   );

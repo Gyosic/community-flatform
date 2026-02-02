@@ -19,8 +19,7 @@ export const siteSettings = pgTable("site_settings", {
   theme_config: jsonb("theme_config").$type<{
     primary_color?: string;
     secondary_color?: string;
-    dark_mode: boolean;
-    dark_mode_default: "light" | "dark";
+    default_theme: "light" | "dark" | "system";
   }>(),
 
   // 권한 설정 (JSONB)

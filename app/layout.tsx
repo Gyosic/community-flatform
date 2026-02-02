@@ -2,9 +2,10 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { SessionProvider } from "next-auth/react";
-import { ThemeProvider } from "next-themes";
+import { ThemeProviderWrapper } from "@/components/providers/ThemeProviderWrapper";
 import { LoadingOverlay } from "@/components/shared/LoadingOverlay";
 import { Toaster } from "@/components/ui/sonner";
+import { getSiteSettings } from "@/lib/data/site-settings";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -16,31 +17,48 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-export const metadata: Metadata = {
-  title: "Community - 커뮤니티 플랫폼",
-  description: "자유롭게 의견을 나누고 정보를 공유하는 커뮤니티 플랫폼",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const settings = await getSiteSettings();
 
-export default function RootLayout({
+  const siteName = settings?.site_name || "Community";
+  const siteDescription = settings?.site_description || "커뮤니티 플랫폼";
+  const seoConfig = settings?.seo_config;
+  const favicon = settings?.favicon?.[0];
+  const ogImage = seoConfig?.og_image?.[0];
+
+  return {
+    title: {
+      default: seoConfig?.meta_title || `${siteName} - ${siteDescription}`,
+      template: `%s | ${siteName}`,
+    },
+    description: seoConfig?.meta_description || siteDescription,
+    keywords: seoConfig?.meta_keywords,
+    icons: { icon: favicon?.src ? `/api/files${favicon.src}` : "/favicon.png" },
+    openGraph: {
+      title: seoConfig?.meta_title || siteName,
+      description: seoConfig?.meta_description || siteDescription,
+      siteName,
+      images: ogImage?.src ? [`/api/files${ogImage.src}`] : undefined,
+    },
+  };
+}
+
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const settings = await getSiteSettings();
+  const defaultTheme = settings?.theme_config?.default_theme || "system";
+
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="ko" suppressHydrationWarning>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         suppressHydrationWarning
       >
         <SessionProvider>
-          <ThemeProvider
-            attribute="data-theme"
-            defaultTheme="system"
-            enableSystem
-            disableTransitionOnChange
-          >
-            {children}
-          </ThemeProvider>
+          <ThemeProviderWrapper defaultTheme={defaultTheme}>{children}</ThemeProviderWrapper>
         </SessionProvider>
         <Toaster />
         <LoadingOverlay />

@@ -2,11 +2,17 @@ import Link from "next/link";
 
 interface FooterProps {
   siteName?: string;
+  siteDescription?: string;
   showFooter?: boolean;
   copyrightText?: string;
 }
 
-export function Footer({ siteName = "Community", showFooter = true, copyrightText }: FooterProps) {
+export function Footer({
+  siteName = "Community",
+  siteDescription = "커뮤니티 플랫폼",
+  showFooter = true,
+  copyrightText,
+}: FooterProps) {
   if (!showFooter) return null;
 
   const currentYear = new Date().getFullYear();
@@ -16,10 +22,9 @@ export function Footer({ siteName = "Community", showFooter = true, copyrightTex
     <footer className="flex w-full justify-center border-t bg-muted/30">
       <div className="container py-12 md:py-16">
         <div className="grid grid-cols-1 gap-8 md:grid-cols-4">
-          {/* 사이트 정보 */}
           <div className="flex flex-col gap-3">
             <h3 className="font-semibold text-base">{siteName}</h3>
-            <p className="text-muted-foreground text-sm">커뮤니티 플랫폼</p>
+            <p className="text-muted-foreground text-sm">{siteDescription}</p>
           </div>
 
           {/* 커뮤니티 링크 */}
