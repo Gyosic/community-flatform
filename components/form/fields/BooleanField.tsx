@@ -1,4 +1,3 @@
-import { LucideIcon } from "lucide-react";
 import { FieldPath, FieldValues } from "react-hook-form";
 import { FormItemWrapper } from "@/components/form/FormItemWrapper";
 import { TemplateFormItemProps } from "@/components/form/TemplateFormItem";
@@ -20,7 +19,7 @@ export function BooleanField<T extends FieldValues, K extends FieldPath<T>>({
       isForm={isForm}
       className={cn(className, labelPosition === "left" ? "flex flex-1 items-center" : "flex-1")}
       labelCls={labelCls}
-      icon={fieldModel.icon as LucideIcon}
+      icon={fieldModel.icon}
     >
       <div className="relative flex items-center justify-center">
         <Switch

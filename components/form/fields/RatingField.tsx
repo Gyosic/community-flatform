@@ -19,7 +19,7 @@ export function RatingField<T extends FieldValues, K extends FieldPath<T>>({
       isForm={isForm}
       className={cn(className, "space-y-3 py-4")}
       labelCls={labelCls}
-      icon={fieldModel.icon as LucideIcon}
+      icon={fieldModel.icon}
     >
       <StarButton max={fieldModel.max} onChange={field.onChange} value={field.value} />
     </FormItemWrapper>

@@ -20,7 +20,7 @@ export function TextareaField<T extends FieldValues, K extends FieldPath<T>>({
       isForm={isForm}
       className={cn(className, labelPosition === "left" ? "flex flex-1 items-center" : "flex-1")}
       labelCls={cn(labelCls)}
-      icon={fieldModel.icon as LucideIcon}
+      icon={fieldModel.icon}
     >
       <Textarea
         className="max-h-62"

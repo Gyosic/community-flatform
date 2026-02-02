@@ -31,7 +31,7 @@ export function RadioField<T extends FieldValues, K extends FieldPath<T>>({
       isForm={isForm}
       className={cn(className, "space-y-3 py-4")}
       labelCls={labelCls}
-      icon={fieldModel.icon as LucideIcon}
+      icon={fieldModel.icon}
     >
       <RadioGroup
         onValueChange={field.onChange}

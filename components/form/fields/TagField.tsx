@@ -26,7 +26,7 @@ export function TagField<T extends FieldValues, K extends FieldPath<T>>({
       labelCls={labelCls}
       className={labelPosition === "left" ? "flex flex-1 items-center" : "flex-1"}
       isForm={isForm}
-      icon={fieldModel.icon as LucideIcon}
+      icon={fieldModel.icon}
     >
       <div className="flex w-full flex-col items-end">
         <TagInput

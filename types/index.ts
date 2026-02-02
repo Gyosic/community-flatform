@@ -97,6 +97,11 @@ export interface FieldModel {
   unique?: boolean;
   inputCls?: string;
   unoptimized?: boolean;
+  min?: number;
+  max?: number;
+  step?: number;
+  range?: boolean;
+  icon?: string;
   [key: string]: unknown;
 }
 

@@ -36,7 +36,7 @@ export function ComboboxField<T extends FieldValues, K extends FieldPath<T>>({
       isForm={isForm}
       className={cn(className, labelPosition === "left" ? "flex flex-1 items-center" : "flex-1")}
       labelCls={labelCls}
-      icon={fieldModel.icon as LucideIcon}
+      icon={fieldModel.icon}
     >
       <Combobox
         value={field.value}

@@ -25,7 +25,7 @@ export function PasswordField<T extends FieldValues, K extends FieldPath<T>>({
       isForm={isForm}
       className={cn(className, labelPosition === "left" ? "flex flex-1 items-center" : "flex-1")}
       labelCls={labelCls}
-      icon={fieldModel.icon as LucideIcon}
+      icon={fieldModel.icon}
     >
       <div className="relative flex w-full items-center gap-2">
         <Input

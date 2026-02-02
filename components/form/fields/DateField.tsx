@@ -20,7 +20,7 @@ export function DateField<T extends FieldValues, K extends FieldPath<T>>({
         isForm={isForm}
         className={labelPosition === "left" ? "flex flex-1 items-center" : "flex-1"}
         labelCls={labelCls}
-        icon={fieldModel.icon as LucideIcon}
+        icon={fieldModel.icon}
       >
         <InputRange type={fieldModel.type} {...field} value={field?.value} />
       </FormItemWrapper>

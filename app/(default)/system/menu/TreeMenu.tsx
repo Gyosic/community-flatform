@@ -143,7 +143,7 @@ function TreeMenuItem({
                 {isMobile && (
                   <>
                     <DropdownMenuItem
-                      onClick={(e: MouseEvent) => {
+                      onClick={(e) => {
                         e.stopPropagation();
                         onMoveUp?.(menu.id);
                       }}
@@ -152,7 +152,7 @@ function TreeMenuItem({
                       위로 이동
                     </DropdownMenuItem>
                     <DropdownMenuItem
-                      onClick={(e: MouseEvent) => {
+                      onClick={(e) => {
                         e.stopPropagation();
                         onMoveDown?.(menu.id);
                       }}
@@ -163,7 +163,7 @@ function TreeMenuItem({
                   </>
                 )}
                 <DropdownMenuItem
-                  onClick={(e: MouseEvent) => {
+                  onClick={(e) => {
                     e.stopPropagation();
                     handleClickAddChild();
                   }}
@@ -172,7 +172,7 @@ function TreeMenuItem({
                   하위 메뉴추가
                 </DropdownMenuItem>
                 <DropdownMenuItem
-                  onClick={(e: MouseEvent) => {
+                  onClick={(e) => {
                     e.stopPropagation();
                     setDeleteDialogOpen(true);
                   }}
@@ -277,7 +277,7 @@ function TreeMenuItem({
                       {isMobile && (
                         <>
                           <DropdownMenuItem
-                            onClick={(e: MouseEvent) => {
+                            onClick={(e) => {
                               e.stopPropagation();
                               onMoveUp?.(menu.id);
                             }}
@@ -286,7 +286,7 @@ function TreeMenuItem({
                             위로 이동
                           </DropdownMenuItem>
                           <DropdownMenuItem
-                            onClick={(e: MouseEvent) => {
+                            onClick={(e) => {
                               e.stopPropagation();
                               onMoveDown?.(menu.id);
                             }}
@@ -297,7 +297,7 @@ function TreeMenuItem({
                         </>
                       )}
                       <DropdownMenuItem
-                        onClick={(e: MouseEvent) => {
+                        onClick={(e) => {
                           e.stopPropagation();
                           handleClickAddChild();
                         }}
@@ -306,7 +306,7 @@ function TreeMenuItem({
                         하위 메뉴추가
                       </DropdownMenuItem>
                       <DropdownMenuItem
-                        onClick={(e: MouseEvent) => {
+                        onClick={(e) => {
                           e.stopPropagation();
                           setDeleteDialogOpen(true);
                         }}

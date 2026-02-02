@@ -36,7 +36,7 @@ export function RecordField<T extends FieldValues, K extends FieldPath<T>>({
       isForm={isForm}
       className={labelPosition === "left" ? "flex flex-1 items-center" : "flex-1"}
       labelCls={labelCls}
-      icon={fieldModel.icon as LucideIcon}
+      icon={fieldModel.icon}
     >
       <div className="flex w-full flex-col gap-2">
         {!Object.entries(field?.value || {}).length ? (
