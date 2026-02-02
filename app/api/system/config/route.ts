@@ -2,6 +2,7 @@ import { eq } from "drizzle-orm";
 import { get, set } from "es-toolkit/compat";
 import { NextRequest, NextResponse } from "next/server";
 import z, { ZodError } from "zod";
+import { requireAdmin } from "@/lib/api/auth-guard";
 import { db, writeDb } from "@/lib/db";
 import { siteSettings } from "@/lib/db/schema";
 import FileSystem from "@/lib/fileSystem";
@@ -39,6 +40,9 @@ const fileTypes = configures.reduce((acc, { schema, baseKey }) => {
   return acc;
 }, [] as string[]);
 export async function POST(req: NextRequest) {
+  const authResult = await requireAdmin();
+  if (!authResult.authorized) return authResult.response;
+
   try {
     const formData = await req.formData();
     const flatData = Object.fromEntries(formData.entries());
@@ -148,6 +152,9 @@ export async function POST(req: NextRequest) {
   }
 }
 export async function PUT(req: NextRequest) {
+  const authResult = await requireAdmin();
+  if (!authResult.authorized) return authResult.response;
+
   try {
     const formData = await req.formData();
     const flatData = Object.fromEntries(formData.entries());

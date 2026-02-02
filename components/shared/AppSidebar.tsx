@@ -1,17 +1,7 @@
 "use client";
 
-import {
-  AudioWaveform,
-  BookOpen,
-  Bot,
-  Command,
-  Frame,
-  GalleryVerticalEnd,
-  Map,
-  PieChart,
-  Settings2,
-  SquareTerminal,
-} from "lucide-react";
+import { GalleryVerticalEnd } from "lucide-react";
+import Image from "next/image";
 import * as React from "react";
 import { useMemo } from "react";
 import { NavMain } from "@/components/shared/NavMain";
@@ -29,6 +19,7 @@ import {
   SidebarMenuItem,
   SidebarRail,
 } from "@/components/ui/sidebar";
+import { FileType } from "@/lib/zod/file";
 import { MenuGroup } from "@/types";
 
 interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
@@ -37,11 +28,24 @@ interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
     email: string;
     name: string;
     avatar: string;
+    role?: string;
   };
+  siteName?: string;
+  logo?: FileType | null;
 }
 
-export function AppSidebar({ userMenu, user, ...props }: AppSidebarProps) {
-  const systemMenuGroup = {
+const ADMIN_ROLES = ["sysadmin", "admin"];
+
+export function AppSidebar({
+  userMenu,
+  user,
+  siteName = "Community",
+  logo,
+  ...props
+}: AppSidebarProps) {
+  const isAdmin = user?.role && ADMIN_ROLES.includes(user.role);
+
+  const systemMenuGroup: MenuGroup = {
     label: "시스템",
     menu: [
       {
@@ -55,6 +59,12 @@ export function AppSidebar({ userMenu, user, ...props }: AppSidebarProps) {
         title: "메뉴관리",
         url: "/system/menu",
         icon: "SquareMenu",
+      },
+      {
+        id: "system_boards",
+        title: "게시판관리",
+        url: "/system/boards",
+        icon: "Layout",
       },
       {
         id: "system_page",
@@ -82,9 +92,12 @@ export function AppSidebar({ userMenu, user, ...props }: AppSidebarProps) {
       },
     ],
   };
+
   const menu = useMemo<MenuGroup[]>(() => {
-    return [userMenu, systemMenuGroup];
-  }, [userMenu]);
+    if (isAdmin) return [userMenu, systemMenuGroup];
+
+    return [userMenu];
+  }, [userMenu, isAdmin]);
 
   return (
     <Sidebar collapsible="icon" {...props}>
@@ -92,12 +105,22 @@ export function AppSidebar({ userMenu, user, ...props }: AppSidebarProps) {
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" asChild>
-              <a href="#">
-                <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
-                  <GalleryVerticalEnd className="size-4" />
-                </div>
+              <a href="/">
+                {logo?.src ? (
+                  <Image
+                    src={`/api/files${logo.src}`}
+                    alt={siteName}
+                    width={32}
+                    height={32}
+                    className="size-8 rounded-lg object-contain"
+                  />
+                ) : (
+                  <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
+                    <GalleryVerticalEnd className="size-4" />
+                  </div>
+                )}
                 <div className="flex flex-col gap-0.5 leading-none">
-                  <span className="font-medium">Community</span>
+                  <span className="font-medium">{siteName}</span>
                 </div>
               </a>
             </SidebarMenuButton>
