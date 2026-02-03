@@ -111,9 +111,12 @@ export interface MenuItem {
   order?: number;
   parent_id?: string;
   icon?: string;
-  url?: string;
   children?: MenuItem[];
   hidden?: boolean;
+
+  type?: string;
+  slug?: string;
+  url?: string;
 }
 
 export interface MenuGroup {

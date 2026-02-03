@@ -7,9 +7,12 @@ const menuItemSchema: z.ZodType<MenuItem> = z.object({
   order: z.number().optional(),
   parent_id: z.string().optional(),
   icon: z.string().optional(),
-  url: z.string().optional(),
   children: z.lazy(() => z.array(menuItemSchema)).optional(),
   hidden: z.boolean().optional(),
+
+  type: z.string().optional(),
+  slug: z.string().optional(),
+  url: z.string().optional(),
 }) satisfies z.ZodType<MenuItem>;
 
 export const menuSchema = z.object({

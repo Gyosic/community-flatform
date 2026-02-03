@@ -1,6 +1,7 @@
 import { eq } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
 import z, { ZodError } from "zod";
+import { requireAdmin } from "@/lib/api/auth-guard";
 import { db, writeDb } from "@/lib/db";
 import { menu } from "@/lib/db/schema/menu";
 import { menuSchema } from "@/lib/zod/menu";
@@ -13,7 +14,11 @@ export async function GET() {
     return NextResponse.json(row);
   } catch {}
 }
+
 export async function POST(req: NextRequest) {
+  const authResult = await requireAdmin();
+  if (!authResult.authorized) return authResult.response;
+
   try {
     const body = await req.json();
     const menuData = await menuSchema.parseAsync(body);
@@ -31,7 +36,11 @@ export async function POST(req: NextRequest) {
     return NextResponse.json(err, { status: 500 });
   }
 }
+
 export async function PUT(req: NextRequest) {
+  const authResult = await requireAdmin();
+  if (!authResult.authorized) return authResult.response;
+
   try {
     const body = await req.json();
     const { id, items } = await menuSchema.extend({ id: z.string() }).parseAsync(body);

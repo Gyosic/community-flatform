@@ -1,6 +1,5 @@
 "use client";
 
-import { ChevronRight } from "lucide-react";
 import { createElement } from "react";
 import {
   SidebarGroup,
@@ -56,7 +55,6 @@ function TreeMenuItem({ menu, depth = 0 }: TreeMenuItemProps) {
           {iconComponent && createElement(iconComponent, { className: "size-4" })}
           <span>{menu.title}</span>
         </a>
-        <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
       </SidebarMenuSubButton>
 
       {hasChildren ? (
@@ -98,7 +96,7 @@ export function NavMain({ items }: NavMainProps) {
         return (
           <SidebarGroup key={i}>
             <SidebarGroupLabel>{label}</SidebarGroupLabel>
-            <TreeMenu menuList={menu}></TreeMenu>
+            <TreeMenu menuList={menu} />
           </SidebarGroup>
         );
       })}

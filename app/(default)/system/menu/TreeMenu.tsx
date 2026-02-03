@@ -296,7 +296,7 @@ function TreeMenuItem({
                           </DropdownMenuItem>
                         </>
                       )}
-                      <DropdownMenuItem
+                      {/* <DropdownMenuItem
                         onClick={(e) => {
                           e.stopPropagation();
                           handleClickAddChild();
@@ -304,7 +304,7 @@ function TreeMenuItem({
                       >
                         <GitBranchPlus className="h-4 w-4" />
                         하위 메뉴추가
-                      </DropdownMenuItem>
+                      </DropdownMenuItem> */}
                       <DropdownMenuItem
                         onClick={(e) => {
                           e.stopPropagation();

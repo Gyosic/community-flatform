@@ -1,8 +1,8 @@
 "use client";
 
-import { Save } from "lucide-react";
+import { Save, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { ControllerRenderProps } from "react-hook-form";
 import { toast } from "sonner";
 import { TreeMenu } from "@/app/(default)/system/menu/TreeMenu";
@@ -13,30 +13,10 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { loading } from "@/lib/loading";
+import { generateChildUrl, getMenuType, MENU_TYPE_LIST } from "@/lib/menu/types";
 import { guid } from "@/lib/randomize";
 import { menuSchema } from "@/lib/zod/menu";
-import { MenuItem } from "@/types";
-
-export const menuFieldModel = {
-  title: {
-    name: "제목",
-    type: "string",
-  },
-  icon: {
-    name: "아이콘",
-    type: "icon",
-  },
-  url: {
-    name: "경로",
-    type: "enum",
-    enums: {
-      "#": "#",
-      홈: "/",
-      인기글: "/popular",
-    },
-  },
-  hidden: { name: "숨김", type: "boolean", default: false },
-};
+import { FieldModel, MenuItem } from "@/types";
 
 interface MenuConfigureProps {
   menuConfigure?: {
@@ -46,6 +26,7 @@ interface MenuConfigureProps {
     updated_at: string;
   };
 }
+
 export default function MenuConfigure({ menuConfigure }: MenuConfigureProps) {
   const router = useRouter();
   const [menuList, setMenuList] = useState<MenuItem[]>([]);
@@ -53,15 +34,57 @@ export default function MenuConfigure({ menuConfigure }: MenuConfigureProps) {
   const [detailDrawerOpen, setDetailDrawerOpen] = useState(false);
   const isMobile = useIsMobile();
 
-  const handleAddMenu = () => {
-    const menu = { id: guid({ length: 11 }), title: "새 메뉴", url: "#" };
+  const menuTypeEnums = useMemo(() => {
+    return MENU_TYPE_LIST.reduce(
+      (acc, type) => {
+        acc[type.label] = type.id;
+        return acc;
+      },
+      {} as Record<string, string>,
+    );
+  }, []);
 
+  const menuFieldModel = useMemo(() => {
+    const isChildMenu = !!selectedMenu?.parent_id;
+
+    const fields: Record<string, FieldModel> = {
+      title: {
+        name: "제목",
+        type: "string",
+      },
+      icon: {
+        name: "아이콘",
+        type: "icon",
+      },
+    };
+
+    if (!isChildMenu) {
+      fields.type = {
+        name: "타입",
+        type: "enum",
+        enums: menuTypeEnums,
+      };
+    }
+
+    fields.hidden = { name: "숨김", type: "boolean" };
+
+    return fields;
+  }, [selectedMenu, menuTypeEnums]);
+
+  const handleAddMenu = () => {
+    const menu: MenuItem = {
+      id: guid({ length: 11 }),
+      title: "새 메뉴",
+      type: "home",
+      url: "/",
+    };
     setMenuList((prev) => [...prev, { ...menu, order: prev.length }]);
   };
 
   const handleSaveMenu = async () => {
     try {
       loading.show("메뉴 저장하는 중...");
+
       const body = await menuSchema.parseAsync({ items: menuList });
 
       if (menuConfigure?.id) {
@@ -85,7 +108,6 @@ export default function MenuConfigure({ menuConfigure }: MenuConfigureProps) {
     if (menuConfigure) {
       setMenuList(menuConfigure.items);
     }
-    // loading.hide(); // 테스트를 위해 임시로 주석
   }, [menuConfigure]);
 
   useEffect(() => {
@@ -93,13 +115,10 @@ export default function MenuConfigure({ menuConfigure }: MenuConfigureProps) {
 
     const updateTree = (items: MenuItem[]): MenuItem[] => {
       return items.map((item) => {
-        // 현재 아이템이 선택된 메뉴면 업데이트
         if (item.id === selectedMenu.id) {
-          // children은 기존 것 유지 (덮어쓰지 않음)
           const { children: _, ...selectedWithoutChildren } = selectedMenu;
           return { ...item, ...selectedWithoutChildren };
         }
-        // 자식이 있으면 재귀 탐색
         if (item.children) {
           return {
             ...item,
@@ -110,9 +129,116 @@ export default function MenuConfigure({ menuConfigure }: MenuConfigureProps) {
       });
     };
 
-    // 함수 전달로 항상 최신 menuList 사용
     setMenuList((prevMenuList) => updateTree(prevMenuList));
   }, [selectedMenu]);
+
+  const handleFieldChange = (fieldKey: string, value: unknown) => {
+    setSelectedMenu((prev) => {
+      if (!prev) return prev;
+
+      const updated = { ...prev, [fieldKey]: value } as MenuItem;
+
+      if (fieldKey === "type" && typeof value === "string") {
+        const menuType = getMenuType(value);
+        if (menuType) {
+          updated.title = menuType.label;
+          updated.icon = menuType.icon;
+
+          if (menuType.hasChildren) {
+            updated.url = undefined;
+          } else {
+            updated.url = menuType.url || undefined;
+          }
+        }
+      }
+
+      return updated;
+    });
+  };
+
+  const handleAddChildMenu = (parentId: string, parentMenuType: string) => {
+    const menuType = getMenuType(parentMenuType);
+    if (!menuType?.hasChildren) return;
+
+    const slug = guid({ length: 11 });
+    const url = generateChildUrl(parentMenuType, slug);
+
+    const childMenu: MenuItem = {
+      id: guid({ length: 11 }),
+      title: "새 하위메뉴",
+      parent_id: parentId,
+      slug,
+      url,
+    };
+
+    const addChildToTree = (items: MenuItem[]): MenuItem[] => {
+      return items.map((item) => {
+        if (item.id === parentId) {
+          const children = item.children || [];
+          return {
+            ...item,
+            children: [...children, { ...childMenu, order: children.length }],
+          };
+        }
+        if (item.children) {
+          return {
+            ...item,
+            children: addChildToTree(item.children),
+          };
+        }
+        return item;
+      });
+    };
+
+    setMenuList((prev) => addChildToTree(prev));
+  };
+
+  const handleDeleteMenu = (menuId: string) => {
+    const removeFromTree = (items: MenuItem[]): MenuItem[] => {
+      return items
+        .filter((item) => item.id !== menuId)
+        .map((item) => {
+          if (item.children) {
+            return {
+              ...item,
+              children: removeFromTree(item.children),
+            };
+          }
+          return item;
+        });
+    };
+
+    setMenuList(removeFromTree(menuList));
+    setSelectedMenu(undefined);
+  };
+
+  const renderFields = () => {
+    return Object.entries(menuFieldModel).map(([fieldKey, fieldModel]) => (
+      <div className="flex" key={fieldKey}>
+        <Label className="min-w-20">{fieldModel.name}</Label>
+        <TemplateFormItem
+          isForm={false}
+          fieldModel={fieldModel}
+          field={
+            {
+              value: (selectedMenu as unknown as Record<string, unknown>)?.[fieldKey] ?? "",
+              onChange: (v: unknown) => {
+                const value =
+                  (v as { target?: { value?: string } })?.target?.value ?? (v as string);
+                handleFieldChange(fieldKey, value);
+              },
+              onBlur: () => {},
+              name: fieldKey,
+              ref: () => {},
+            } as unknown as ControllerRenderProps
+          }
+        />
+      </div>
+    ));
+  };
+
+  const selectedMenuType = selectedMenu?.type ? getMenuType(selectedMenu.type) : null;
+  const canAddChild = selectedMenuType?.hasChildren && !selectedMenu?.parent_id;
 
   return (
     <div className="flex h-full w-full">
@@ -144,70 +270,48 @@ export default function MenuConfigure({ menuConfigure }: MenuConfigureProps) {
         {selectedMenu &&
           (isMobile ? (
             <Drawer open={detailDrawerOpen} onOpenChange={setDetailDrawerOpen} direction="right">
-              <DrawerTitle></DrawerTitle>
+              <DrawerTitle />
               <DrawerContent className="flex flex-col gap-2 p-2">
-                {Object.entries(menuFieldModel).map(([fieldKey, fieldModel], i) => {
-                  const typedKey = fieldKey as keyof typeof menuFieldModel;
-                  return (
-                    <div className="flex" key={fieldKey}>
-                      <Label className="min-w-20">{fieldModel.name}</Label>
-                      <TemplateFormItem
-                        isForm={false}
-                        fieldModel={fieldModel}
-                        field={
-                          {
-                            value: selectedMenu[typedKey] ?? "",
-                            onChange: (v: unknown) => {
-                              const value =
-                                (v as { target?: { value?: string } })?.target?.value ??
-                                (v as string);
-                              setSelectedMenu((prev) => {
-                                if (!prev) return prev;
-                                return { ...prev, [fieldKey]: value } as MenuItem;
-                              });
-                            },
-                            onBlur: () => {},
-                            name: fieldKey,
-                            ref: () => {},
-                          } as unknown as ControllerRenderProps
-                        }
-                      ></TemplateFormItem>
-                    </div>
-                  );
-                })}
+                {renderFields()}
+                {canAddChild && (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="mt-4"
+                    onClick={() => handleAddChildMenu(selectedMenu.id, selectedMenu.type!)}
+                  >
+                    하위메뉴 추가
+                  </Button>
+                )}
+                <Button
+                  variant="destructive"
+                  size="sm"
+                  onClick={() => handleDeleteMenu(selectedMenu.id)}
+                >
+                  삭제
+                </Button>
               </DrawerContent>
             </Drawer>
           ) : (
             <div className="flex flex-1 flex-col gap-2 p-2">
-              {Object.entries(menuFieldModel).map(([fieldKey, fieldModel], i) => {
-                const typedKey = fieldKey as keyof typeof menuFieldModel;
-                return (
-                  <div className="flex" key={fieldKey}>
-                    <Label className="min-w-20">{fieldModel.name}</Label>
-                    <TemplateFormItem
-                      isForm={false}
-                      fieldModel={fieldModel}
-                      field={
-                        {
-                          value: selectedMenu[typedKey] ?? "",
-                          onChange: (v: unknown) => {
-                            const value =
-                              (v as { target?: { value?: string } })?.target?.value ??
-                              (v as string);
-                            setSelectedMenu((prev) => {
-                              if (!prev) return prev;
-                              return { ...prev, [fieldKey]: value } as MenuItem;
-                            });
-                          },
-                          onBlur: () => {},
-                          name: fieldKey,
-                          ref: () => {},
-                        } as unknown as ControllerRenderProps
-                      }
-                    ></TemplateFormItem>
-                  </div>
-                );
-              })}
+              {renderFields()}
+              {canAddChild && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handleAddChildMenu(selectedMenu.id, selectedMenu.type!)}
+                >
+                  하위메뉴 추가
+                </Button>
+              )}
+              <Button
+                variant="destructive"
+                size="sm"
+                onClick={() => handleDeleteMenu(selectedMenu.id)}
+              >
+                <Trash2 />
+                삭제
+              </Button>
             </div>
           ))}
       </div>
