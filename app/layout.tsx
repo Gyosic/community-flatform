@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { SessionProvider } from "next-auth/react";
 import { ThemeProviderWrapper } from "@/components/providers/ThemeProviderWrapper";
+import { Alert } from "@/components/shared/Alert";
 import { LoadingOverlay } from "@/components/shared/LoadingOverlay";
 import { Toaster } from "@/components/ui/sonner";
 import { getSiteSettings } from "@/lib/data/site-settings";
@@ -62,6 +63,7 @@ export default async function RootLayout({
         </SessionProvider>
         <Toaster />
         <LoadingOverlay />
+        <Alert />
       </body>
     </html>
   );

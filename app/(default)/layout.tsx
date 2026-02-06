@@ -43,14 +43,14 @@ export default async function DefaultLayout({
   const userMenu: MenuGroup = { label: "메뉴", menu };
 
   return (
-    <SidebarProvider>
+    <SidebarProvider suppressHydrationWarning>
       <AppSidebar userMenu={userMenu} user={user} siteName={siteName} logo={logo} />
       <SidebarInset>
         <Header siteName={siteName} user={user} />
 
         <div className="flex flex-1">
           <main className="flex-1">
-            <div className="container h-full p-2">{children}</div>
+            <div className="h-full w-full p-2">{children}</div>
           </main>
         </div>
 
