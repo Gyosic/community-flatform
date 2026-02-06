@@ -12,7 +12,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Form, FormField } from "@/components/ui/form";
 import { useDynamicIcon } from "@/hooks/use-lucide-icon";
-import { loading } from "@/lib/loading";
+import { loading } from "@/lib/store/loading";
+import { fieldModelBuilder } from "@/lib/zod";
 import {
   configures,
   featureSchema,
@@ -34,21 +35,7 @@ interface CardSectionProps {
   form: UseFormReturn<SiteSettingType>;
 }
 function CardSection({ schema, title, description, icon, baseKey, form }: CardSectionProps) {
-  type Schema = z.infer<typeof schema>;
-  const { fieldModel, defaultValues } = useMemo(() => {
-    const defaultValues: Schema = {};
-    const fieldModel = Object.entries(schema.shape).reduce(
-      (acc, [fieldKey, { type, description = "{}" }]) => {
-        const model = JSON.parse(description);
-        acc[fieldKey] = { type, ...model };
-        if (!isNil(model?.default)) defaultValues[fieldKey] = model.default;
-        return acc;
-      },
-      {} as Record<string, FieldModel>,
-    );
-
-    return { fieldModel, defaultValues };
-  }, [schema]);
+  const { fieldModel, defaultValues } = fieldModelBuilder({ schema });
 
   const iconComponent = useDynamicIcon(icon);
 
