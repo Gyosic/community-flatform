@@ -16,6 +16,7 @@ export const extensionToMime: Record<string, string> = {
   heic: "image/heic",
   heif: "image/heif",
   ico: "image/x-icon",
+  image: "image/*",
 
   // 문서
   pdf: "application/pdf",

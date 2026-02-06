@@ -51,7 +51,15 @@ export interface UserSession {
 }
 
 // 게시판 타입
-export type BoardType = "general" | "qna" | "gallery" | "notice";
+export type BoardType =
+  | "general"
+  | "free"
+  | "qna"
+  | "gallery"
+  | "notice"
+  | "discussion"
+  | "suggestion"
+  | "rule";
 
 // 게시글 타입
 export type PostType = "normal" | "notice" | "pinned";
@@ -113,9 +121,7 @@ export interface MenuItem {
   icon?: string;
   children?: MenuItem[];
   hidden?: boolean;
-
-  type?: string;
-  slug?: string;
+  board_id?: string;
   url?: string;
 }
 
