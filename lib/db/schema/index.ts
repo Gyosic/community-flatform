@@ -3,8 +3,8 @@
  * 모든 테이블 스키마를 여기서 export
  */
 
-export * from "./boards";
 export * from "./comments";
+export * from "./pages";
 export * from "./posts";
 export * from "./roles";
 export * from "./site-settings";

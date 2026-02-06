@@ -61,16 +61,10 @@ export function AppSidebar({
         icon: "SquareMenu",
       },
       {
-        id: "system_boards",
-        title: "게시판관리",
-        url: "/system/boards",
-        icon: "Layout",
-      },
-      {
-        id: "system_page",
+        id: "system_pagess",
         title: "페이지관리",
-        url: "/system/page",
-        icon: "Wallpaper",
+        url: "/system/pages",
+        icon: "Layout",
       },
       {
         id: "system_theme",
