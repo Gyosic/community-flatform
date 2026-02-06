@@ -1,26 +1,18 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { Spinner } from "@/components/shared/Spinner";
-import { loadingStore } from "@/lib/loading";
+import { useLoadingStore } from "@/lib/store/loading";
 
 export function LoadingOverlay() {
-  const [state, setState] = useState(loadingStore.getState());
+  const { loading: { isVisible, message } = {} } = useLoadingStore((state) => state);
 
-  useEffect(() => {
-    const unsubscribe = loadingStore.subscribe(setState);
-    // 구독 후 현재 상태를 다시 확인 (구독 전에 변경된 상태를 캐치)
-    setState(loadingStore.getState());
-    return unsubscribe;
-  }, []);
-
-  if (!state.isVisible) return null;
+  if (!isVisible) return null;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/0 backdrop-blur-[1.5px]">
       <div className="flex flex-col items-center gap-4 rounded-lg bg-card p-6 shadow-lg">
         <Spinner variant="ellipsis" />
-        <p className="font-medium text-sm">{state.message}</p>
+        <p className="font-medium text-sm">{message}</p>
       </div>
     </div>
   );
