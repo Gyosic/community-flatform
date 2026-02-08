@@ -21,17 +21,9 @@ import {
 } from "@tanstack/react-table";
 import { isBoolean } from "es-toolkit";
 import { isNil } from "es-toolkit/compat";
-import {
-  ChevronDown,
-  ChevronLeft,
-  ChevronRight,
-  ChevronsLeft,
-  ChevronsRight,
-  LoaderCircle,
-  SquareCheck,
-  SquareX,
-} from "lucide-react";
-import { ReactNode, useMemo, useState } from "react";
+import { ChevronDown, LoaderCircle, SquareCheck, SquareX } from "lucide-react";
+import { ReactNode, useEffect, useState } from "react";
+import { Pagination } from "@/components/shared/Pagination";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -67,6 +59,7 @@ export interface DataTableProps<TData, TValue> {
   manualPagination?: boolean;
   manualSorting?: boolean;
   btnGroup?: ReactNode;
+  enableColumnVisibility?: boolean;
   onPaginationChange?: OnChangeFn<PaginationState>;
   onSortingChange?: OnChangeFn<SortingState>;
 }
@@ -84,6 +77,7 @@ export function DataTable<TData, TValue>({
   manualPagination,
   manualSorting,
   btnGroup,
+  enableColumnVisibility = true,
   onPaginationChange: handlePaginationChange,
   onSortingChange: handleSortingChange,
 }: DataTableProps<TData, TValue>) {
@@ -122,52 +116,48 @@ export function DataTable<TData, TValue>({
 
   const table = useReactTable(options);
 
-  const isSelectable = useMemo(
-    // @ts-expect-error: no type
-    () => columns.find(({ accessorKey }) => accessorKey === "select"),
-    [columns],
-  );
-
   return (
     <div className={cn("space-y-2", className)}>
       <div className="flex justify-end gap-2">
         {!!btnGroup && <>{btnGroup}</>}
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button type="button" variant="outline" className="">
-              표시할 항목 선택
-              <ChevronDown />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-(--radix-dropdown-menu-trigger-width)">
-            {table
-              .getAllColumns()
-              .filter((column) => column.getCanHide())
-              .map((column) => {
-                return (
-                  <DropdownMenuCheckboxItem
-                    key={column.id}
-                    className="capitalize"
-                    checked={column.getIsVisible()}
-                    onCheckedChange={(value) => {
-                      column.toggleVisibility(!!value);
-                    }}
-                    onSelect={(e) => e.preventDefault()}
-                  >
-                    {(column.columnDef?.meta as string) ?? column.id}
-                  </DropdownMenuCheckboxItem>
-                );
-              })}
-          </DropdownMenuContent>
-        </DropdownMenu>
+        {!!enableColumnVisibility && (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button type="button" variant="outline" className="">
+                표시할 항목 선택
+                <ChevronDown />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-(--radix-dropdown-menu-trigger-width)">
+              {table
+                .getAllColumns()
+                .filter((column) => column.getCanHide())
+                .map((column) => {
+                  return (
+                    <DropdownMenuCheckboxItem
+                      key={column.id}
+                      className="capitalize"
+                      checked={column.getIsVisible()}
+                      onCheckedChange={(value) => {
+                        column.toggleVisibility(!!value);
+                      }}
+                      onSelect={(e) => e.preventDefault()}
+                    >
+                      {(column.columnDef?.meta as string) ?? column.id}
+                    </DropdownMenuCheckboxItem>
+                  );
+                })}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        )}
       </div>
       <div className="rounded-none border">
         <Table>
-          <TableHeader>
+          <TableHeader className="bg-muted">
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (
-                  <TableHead key={header.id}>
+                  <TableHead key={header.id} className="h-7">
                     {!header.isPlaceholder &&
                       flexRender(header.column.columnDef.header, header.getContext())}
                   </TableHead>
@@ -210,85 +200,7 @@ export function DataTable<TData, TValue>({
         </Table>
       </div>
 
-      <div className="flex items-center justify-between px-2">
-        {isSelectable && (
-          <div className="flex-1 text-muted-foreground text-sm">
-            {table.getFilteredSelectedRowModel().rows.length} of{" "}
-            {table.getFilteredRowModel().rows.length} row(s) selected.
-          </div>
-        )}
-        <div className="flex w-full items-center space-x-6 lg:space-x-8">
-          <div className="flex items-center space-x-2 text-sm">
-            총 {thousandComma(options.rowCount ?? 0)} 행
-            {/* <p className="text-sm font-medium">Rows per page</p>
-            <Select
-              value={`${table.getState().pagination.pageSize}`}
-              onValueChange={(value) => table.setPageSize(Number(value))}
-            >
-              <SelectTrigger className="h-8 w-[70px]">
-                <SelectValue placeholder={table.getState().pagination.pageSize} />
-              </SelectTrigger>
-              <SelectContent side="top">
-                {[10].map((pageSize) => (
-                  <SelectItem key={pageSize} value={`${pageSize}`}>
-                    {pageSize}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select> */}
-          </div>
-          <div className="ml-auto flex min-w-25 items-center justify-center font-medium text-sm">
-            페이지 {thousandComma(table.getState().pagination.pageIndex + 1)} /{" "}
-            {thousandComma(table.getPageCount())}
-          </div>
-          <div className="flex items-center space-x-2">
-            <Button
-              type="button"
-              variant="outline"
-              size="icon"
-              className="hidden size-8 lg:flex"
-              onClick={() => table.setPageIndex(0)}
-              disabled={!table.getCanPreviousPage()}
-            >
-              <span className="sr-only">Go to first page</span>
-              <ChevronsLeft />
-            </Button>
-            <Button
-              type="button"
-              variant="outline"
-              size="icon"
-              className="size-8"
-              onClick={() => table.previousPage()}
-              disabled={!table.getCanPreviousPage()}
-            >
-              <span className="sr-only">Go to previous page</span>
-              <ChevronLeft />
-            </Button>
-            <Button
-              type="button"
-              variant="outline"
-              size="icon"
-              className="size-8"
-              onClick={() => table.nextPage()}
-              disabled={!table.getCanNextPage()}
-            >
-              <span className="sr-only">Go to next page</span>
-              <ChevronRight />
-            </Button>
-            <Button
-              type="button"
-              variant="outline"
-              size="icon"
-              className="hidden size-8 lg:flex"
-              onClick={() => table.setPageIndex(table.getPageCount() - 1)}
-              disabled={!table.getCanNextPage()}
-            >
-              <span className="sr-only">Go to last page</span>
-              <ChevronsRight />
-            </Button>
-          </div>
-        </div>
-      </div>
+      {!!pagination && <Pagination table={table} pagination={pagination} total={rowCount ?? 0} />}
     </div>
   );
 }
