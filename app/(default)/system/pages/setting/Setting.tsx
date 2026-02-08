@@ -1,20 +1,18 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Calendar, Eye, FileText, ImageIcon, List, Save, TrendingUp, User } from "lucide-react";
+import { Eye, Save } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { GridLayout, LayoutWidget } from "@/app/(default)/system/pages/setting/GridLayout";
 import { TemplateFormItem } from "@/components/form/TemplateFormItem";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Form, FormField } from "@/components/ui/form";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
-import { loading } from "@/lib/loading";
+import { loading } from "@/lib/store/loading";
 import { fieldModelBuilder } from "@/lib/zod";
 import {
   type PageSchema,
@@ -115,10 +113,8 @@ export function Setting() {
         toast.success(isEditMode ? "페이지가 수정되었습니다." : "페이지가 생성되었습니다.");
         router.push("/system/pages");
       } catch (err) {
-        console.info(err, err.message);
-        toast.error("서버 오류가 발생했습니다.", {
-          description: err?.message || "",
-        });
+        const { message = "" } = err as { message?: string };
+        toast.error("서버 오류가 발생했습니다.", { description: message });
       } finally {
         loading.hide();
       }

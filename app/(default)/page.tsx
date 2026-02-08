@@ -1,4 +1,8 @@
+import { Postlist } from "@/components/cms/Postlist";
+import { auth } from "@/lib/auth";
+
 export default async function Home() {
+  const session = await auth();
   return (
     <div className="flex flex-col gap-12">
       {/* 환영 섹션 - 시선 흐름 시작점 */}
@@ -8,6 +12,8 @@ export default async function Home() {
           자유롭게 의견을 나누고 정보를 공유하는 공간입니다.
         </p>
       </section>
+
+      <Postlist boardType="free" noData="게시글이 없습니다." session={session} />
     </div>
   );
 }

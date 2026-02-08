@@ -1,14 +1,15 @@
-import { and, asc, desc, eq, getTableColumns } from "drizzle-orm";
+import { and, asc, desc, eq, getTableColumns, like } from "drizzle-orm";
 import { isNil } from "es-toolkit/compat";
 import { NextRequest, NextResponse } from "next/server";
 import z from "zod";
 import { parseQuery } from "@/lib/api/parse-query";
 import { db } from "@/lib/db";
-import { pages, posts, users } from "@/lib/db/schema";
+import { pages, postAttachments, posts, users } from "@/lib/db/schema";
 
 const postColumns = getTableColumns(posts);
 const userColumns = getTableColumns(users);
 const pageColumns = getTableColumns(pages);
+const attachmentsColumns = getTableColumns(postAttachments);
 
 type PostColumn = keyof typeof postColumns;
 
@@ -18,21 +19,29 @@ const schema = z.object({
   size: z.coerce.number().optional(),
   board_type: z.string().optional(),
   title: z.string().optional(),
+  user_name: z.string().optional(),
 });
 
 export async function GET(req: NextRequest) {
   try {
-    const { sorts, from, size, board_type, title } = parseQuery(req, schema);
+    const { sorts, from, size, board_type, title, user_name } = parseQuery(req, schema);
 
     const where = [];
     if (board_type) where.push(eq(pages.type, board_type));
-    if (title) where.push(eq(posts.title, title));
+    if (title) where.push(like(posts.title, title));
+    if (user_name) where.push(like(users.name, user_name));
 
     let query = db
-      .select({ ...postColumns, user: userColumns, page: pageColumns })
+      .select({
+        ...postColumns,
+        user: userColumns,
+        page: pageColumns,
+        attachment: attachmentsColumns,
+      })
       .from(posts)
       .innerJoin(pages, eq(pages.id, posts.page_id))
       .innerJoin(users, eq(users.id, posts.author_id))
+      .innerJoin(postAttachments, eq(postAttachments.post_id, posts.id))
       .where(and(...where))
       .$dynamic();
 
