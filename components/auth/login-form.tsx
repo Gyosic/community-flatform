@@ -109,7 +109,7 @@ export function LoginForm() {
 
                 <div className="text-center text-muted-foreground text-sm">
                   계정이 없으신가요?{" "}
-                  <Link href="/register" className="text-primary hover:underline">
+                  <Link href="/signup" className="text-primary hover:underline">
                     회원가입
                   </Link>
                 </div>

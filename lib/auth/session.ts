@@ -10,12 +10,12 @@ export function getSession(context: SessionContextValue | Session | null): Sessi
 }
 
 export function isSys(context: SessionContextValue | Session | null) {
-  return Boolean(getSession(context)?.user?.is_sysadmin);
+  return getSession(context)?.user?.role === "sysadmin";
 }
 
 export function isAdmin(context: SessionContextValue | Session | null) {
-  // @ts-expect-error: admin is not defined in the Session type
-  return "admin" === getSession(context)?.user.role || isSys(context);
+  const role = getSession(context)?.user?.role;
+  return role === "admin" || role === "sysadmin";
 }
 
 export function get(context: SessionContextValue | Session | null, key: keyof Session["user"]) {
@@ -26,8 +26,8 @@ export function id(context: SessionContextValue | Session | null) {
   return getSession(context)?.user.id;
 }
 
-export function token(context: SessionContextValue | Session | null) {
-  return getSession(context)?.user.access_token ?? "";
+export function token(_context: SessionContextValue | Session | null) {
+  return "";
 }
 
 export function isAuthenticated(context: SessionContextValue | null) {

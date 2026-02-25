@@ -28,5 +28,5 @@ export const authorize = async (credentials: Partial<Record<"email" | "password"
 
   const { user } = await signinRes.json();
 
-  return user as User;
+  return user;
 };

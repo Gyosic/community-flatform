@@ -48,6 +48,7 @@ export interface UserSession {
   role_name: string;
   level: number;
   avatar_url?: string;
+  accessToken: string;
 }
 
 // 게시판 타입
