@@ -16,7 +16,7 @@ export async function login(email: string, password: string, redirect: boolean =
     const { message = "알 수 없는 오류가 발생했습니다." } = (error as AuthError) || {};
 
     try {
-      return { error: { message: JSON.parse(message) } };
+      return { error: JSON.parse(message) };
     } catch {
       return { error: { message } };
     }

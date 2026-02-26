@@ -47,7 +47,7 @@ export function LoginForm() {
     try {
       const { error } = await login(data.email, data.password);
 
-      if (error) toast.error(error.message.error);
+      if (error) toast.error(error.error, { description: error.message });
       else router.push("/");
     } catch {
       toast.error("로그인에 실패했습니다");

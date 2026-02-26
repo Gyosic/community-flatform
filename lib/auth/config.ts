@@ -47,8 +47,8 @@ const authConfig = {
       // Signin 할 때 사용 함: 사용자 정보 조회하고 객체 리턴하는 함수
       authorize,
     }),
-    Google,
-    Naver,
+    Google({ allowDangerousEmailAccountLinking: true }),
+    Naver({ allowDangerousEmailAccountLinking: true }),
   ],
   pages: {
     signIn: "/",
@@ -69,10 +69,23 @@ const authConfig = {
   events: {
     async createUser({ user }) {
       if (!user.email) return;
+
+      if (user.is_email_verified) return;
+
       await writeDb
         .update(users)
-        .set({ emailVerified: new Date() })
+        .set({ emailVerified: new Date(), is_email_verified: true })
         .where(eq(users.email, user.email));
+    },
+    async linkAccount({ user }) {
+      if (!user.id) return;
+
+      if (user.is_email_verified) return;
+
+      await writeDb
+        .update(users)
+        .set({ emailVerified: new Date(), is_email_verified: true })
+        .where(eq(users.id, user.id));
     },
   },
   secret: process.env.AUTH_SECRET,
