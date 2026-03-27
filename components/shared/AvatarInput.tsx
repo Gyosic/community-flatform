@@ -12,33 +12,25 @@ import { Dropzone, DropzoneContent, DropzoneEmptyState } from "@/components/ui/s
 import { cn } from "@/lib/utils";
 import { FileType } from "@/lib/zod/file";
 
-interface FileInputProps {
+interface AvatarInputProps {
   accept?: Accept;
-  multiple?: boolean;
   value?: File[];
   onChange?: (...args: unknown[]) => void;
   className?: string;
   unoptimized?: boolean;
 }
-export default function FileInput({
+export default function AvatarInput({
   accept,
   value = [],
-  multiple,
   onChange,
   className,
   unoptimized = false,
-}: FileInputProps) {
+}: AvatarInputProps) {
   const [files, setFiles] = useState<File[] | FileType[] | undefined>(value);
   const [filePreview, setFilePreview] = useState<File[]>([]);
 
   const handleDrop = (inputs: File[]) => {
-    if (multiple) {
-      if (inputs.some(({ name }) => files?.find(({ name: fname }) => fname === name)))
-        return toast.error("같은 파일이 있습니다.");
-      setFiles((prev) => {
-        return prev?.concat(inputs) ?? inputs;
-      });
-    } else setFiles(inputs);
+    setFiles(inputs);
   };
 
   const readAsDataURL = async (file: File) => {
@@ -74,14 +66,14 @@ export default function FileInput({
     setFilePreview(newFilePreview as File[]);
   };
 
-  const handleRemove = async (name: string) => {
-    const file = files?.find((file) => file.name === name);
+  const handleRemove = async () => {
+    const [file] = files ?? [];
 
     if (file) {
       if (!(file instanceof File)) {
         await fetch(`/api/files${file.src}`, { method: "DELETE" });
       }
-      setFiles((prev) => prev?.filter((f) => f.name !== name) ?? []);
+      setFiles([]);
     }
   };
 
@@ -103,54 +95,41 @@ export default function FileInput({
   return (
     <div className={cn("relative flex w-full flex-col gap-2", className)}>
       <Dropzone
-        multiple={multiple}
-        maxFiles={10}
+        multiple={false}
+        maxFiles={1}
         accept={accept}
         onDrop={handleDrop}
         onError={console.error}
         src={files as File[]}
-        className="flex-1"
+        className="h-50 w-50 rounded-full p-0"
       >
         <DropzoneEmptyState />
-        <DropzoneContent></DropzoneContent>
+        <DropzoneContent>
+          {filePreview && !!filePreview.length && (
+            <Image
+              alt="Preview"
+              className="h-full w-full object-cover"
+              src={filePreview[0].src}
+              width={0}
+              height={0}
+              unoptimized={unoptimized}
+            />
+          )}
+        </DropzoneContent>
       </Dropzone>
 
       {filePreview && !!filePreview.length && (
-        <Carousel className="w-full flex-1">
-          <CarouselContent className="ml-0">
-            {filePreview?.map((file, index) => (
-              <CarouselItem key={index} className="basis-full pl-0">
-                <div className="w-full">
-                  <Card className="relative">
-                    <CardContent className="flex h-45 p-0">
-                      <div className="absolute top-0 flex w-full items-center justify-between ps-2">
-                        <span className="font-bold">{index + 1}</span>
-                        <Button
-                          variant="ghost"
-                          type="button"
-                          size="icon"
-                          className="hover:bg-transparent hover:text-red-500"
-                          onClick={() => handleRemove(file.name)}
-                        >
-                          <X className="h-4 w-4" />
-                        </Button>
-                      </div>
-
-                      <Image
-                        alt="Preview"
-                        className="h-full w-full object-contain"
-                        src={file.src}
-                        width={0}
-                        height={0}
-                        unoptimized={unoptimized}
-                      />
-                    </CardContent>
-                  </Card>
-                </div>
-              </CarouselItem>
-            ))}
-          </CarouselContent>
-        </Carousel>
+        <div className="absolute top-[-10] right-[-5]">
+          <Button
+            variant="ghost"
+            type="button"
+            size="icon"
+            className="hover:bg-transparent hover:text-red-500"
+            onClick={() => handleRemove()}
+          >
+            <X className="h-4 w-4" />
+          </Button>
+        </div>
       )}
     </div>
   );

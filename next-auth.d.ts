@@ -5,9 +5,12 @@ declare module "next-auth" {
   interface User extends SchemaUser {
     role?: string;
     is_email_verified?: boolean;
+    access_token?: string;
+    image?: FileType;
   }
 
   interface Session {
     user: User;
+    access_token: string;
   }
 }

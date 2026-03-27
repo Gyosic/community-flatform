@@ -3,10 +3,10 @@ import { useEffect, useMemo, useState } from "react";
 import { FieldPath, FieldValues } from "react-hook-form";
 import { FormItemWrapper } from "@/components/form/FormItemWrapper";
 import { TemplateFormItemProps } from "@/components/form/TemplateFormItem";
-import FileInput from "@/components/shared/FileInput";
+import AvatarInput from "@/components/shared/AvatarInput";
 import { extensionToMime } from "@/lib/zod/file";
 
-export function FileField<T extends FieldValues, K extends FieldPath<T>>({
+export function AvatarField<T extends FieldValues, K extends FieldPath<T>>({
   fieldModel,
   field,
   isForm = true,
@@ -39,8 +39,7 @@ export function FileField<T extends FieldValues, K extends FieldPath<T>>({
       icon={fieldModel.icon}
     >
       <div className="flex w-full flex-col items-end">
-        <FileInput
-          multiple={fieldModel.multiple}
+        <AvatarInput
           value={inputValue}
           onChange={field.onChange}
           accept={accept}

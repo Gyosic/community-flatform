@@ -1,5 +1,6 @@
 @import "tailwindcss";
 @import "tw-animate-css";
+@plugin "@tailwindcss/typography";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -121,5 +122,148 @@
   }
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+@layer components {
+  .tiptap {
+    @apply outline-none;
+  }
+
+  .tiptap > * + * {
+    margin-top: 0.75em;
+  }
+
+  .tiptap p.is-editor-empty:first-child::before {
+    @apply text-muted-foreground pointer-events-none float-left h-0;
+    content: attr(data-placeholder);
+  }
+
+  .tiptap pre {
+    @apply bg-muted rounded-md p-4 font-mono text-sm;
+  }
+
+  .tiptap pre code {
+    @apply bg-transparent p-0 text-inherit;
+  }
+
+  .tiptap blockquote {
+    @apply border-l-4 border-muted-foreground/30 pl-4 italic;
+  }
+
+  .tiptap ul,
+  .tiptap ol {
+    @apply pl-6;
+  }
+
+  .tiptap ul {
+    @apply list-disc;
+  }
+
+  .tiptap ol {
+    @apply list-decimal;
+  }
+
+  .tiptap a {
+    @apply text-primary underline cursor-pointer;
+  }
+
+  .tiptap > :first-child {
+    margin-top: 0;
+  }
+
+  .tiptap img {
+    @apply h-auto w-auto object-contain m-0!;
+  }
+
+  .tiptap [data-resize-handle] {
+    position: absolute;
+    background: rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    border-radius: 2px;
+    z-index: 10;
+    width: 8px;
+    height: 8px;
+  }
+
+  .tiptap [data-resize-handle]:hover {
+    background: rgba(0, 0, 0, 0.8);
+  }
+
+  /* Corner handles */
+  .tiptap [data-resize-handle="top-left"],
+  .tiptap [data-resize-handle="top-right"],
+  .tiptap [data-resize-handle="bottom-left"],
+  .tiptap [data-resize-handle="bottom-right"] {
+    width: 8px;
+    height: 8px;
+  }
+
+  .tiptap [data-resize-handle="top-left"] {
+    top: -4px;
+    left: -4px;
+    cursor: nwse-resize;
+  }
+
+  .tiptap [data-resize-handle="top-right"] {
+    top: -4px;
+    right: -4px;
+    cursor: nesw-resize;
+  }
+
+  .tiptap [data-resize-handle="bottom-left"] {
+    bottom: -4px;
+    left: -4px;
+    cursor: nesw-resize;
+  }
+
+  .tiptap [data-resize-handle="bottom-right"] {
+    bottom: -4px;
+    right: -4px;
+    cursor: nwse-resize;
+  }
+
+  /* Edge handles */
+  .tiptap [data-resize-handle="top"],
+  .tiptap [data-resize-handle="bottom"] {
+    height: 6px;
+    left: 8px;
+    right: 8px;
+  }
+
+  .tiptap [data-resize-handle="top"] {
+    top: -3px;
+    cursor: ns-resize;
+  }
+
+  .tiptap [data-resize-handle="bottom"] {
+    bottom: -3px;
+    cursor: ns-resize;
+  }
+
+  .tiptap [data-resize-handle="left"],
+  .tiptap [data-resize-handle="right"] {
+    width: 6px;
+    top: 8px;
+    bottom: 8px;
+  }
+
+  .tiptap [data-resize-handle="left"] {
+    left: -3px;
+    cursor: ew-resize;
+  }
+
+  .tiptap [data-resize-handle="right"] {
+    right: -3px;
+    cursor: ew-resize;
+  }
+
+  .tiptap [data-resize-wrapper] {
+    @apply inline-block! align-top;
+  }
+
+  .tiptap [data-resize-state="true"] [data-resize-wrapper] {
+    outline: 1px solid rgba(0, 0, 0, 0.25);
+    border-radius: 0.125rem;
   }
 }

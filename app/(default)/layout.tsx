@@ -34,7 +34,7 @@ export default async function DefaultLayout({
         name: session?.user.name ?? "",
         role: session?.user.role ?? "",
         email: session?.user.email ?? "",
-        avatar: "",
+        image: session?.user.image ?? "",
       }
     : undefined;
 
@@ -44,7 +44,13 @@ export default async function DefaultLayout({
 
   return (
     <SidebarProvider suppressHydrationWarning>
-      <AppSidebar userMenu={userMenu} user={user} siteName={siteName} logo={logo} />
+      <AppSidebar
+        userMenu={userMenu}
+        user={user}
+        siteName={siteName}
+        logo={logo}
+        baseurl={app.baseurl}
+      />
       <SidebarInset>
         <Header siteName={siteName} user={user} />
 

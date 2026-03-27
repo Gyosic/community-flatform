@@ -9,9 +9,7 @@ const menuItemSchema: z.ZodType<MenuItem> = z.object({
   icon: z.string().optional(),
   children: z.lazy(() => z.array(menuItemSchema)).optional(),
   hidden: z.boolean().optional(),
-
-  type: z.string().optional(),
-  slug: z.string().optional(),
+  page_id: z.string().optional(),
   url: z.string().optional(),
 }) satisfies z.ZodType<MenuItem>;
 

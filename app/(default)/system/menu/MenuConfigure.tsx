@@ -12,11 +12,17 @@ import { Drawer, DrawerContent, DrawerTitle } from "@/components/ui/drawer";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { loading } from "@/lib/loading";
-import { generateChildUrl, getMenuType, MENU_TYPE_LIST } from "@/lib/menu/types";
 import { guid } from "@/lib/randomize";
+import { loading } from "@/lib/store/loading";
 import { menuSchema } from "@/lib/zod/menu";
 import { FieldModel, MenuItem } from "@/types";
+
+interface Board {
+  id: string;
+  name: string;
+  slug: string;
+  type: string;
+}
 
 interface MenuConfigureProps {
   menuConfigure?: {
@@ -25,28 +31,35 @@ interface MenuConfigureProps {
     created_at: string;
     updated_at: string;
   };
+  baseurl: string;
 }
 
-export default function MenuConfigure({ menuConfigure }: MenuConfigureProps) {
+export default function MenuConfigure({ menuConfigure, baseurl }: MenuConfigureProps) {
   const router = useRouter();
   const [menuList, setMenuList] = useState<MenuItem[]>([]);
   const [selectedMenu, setSelectedMenu] = useState<MenuItem>();
   const [detailDrawerOpen, setDetailDrawerOpen] = useState(false);
+  const [boards, setBoards] = useState<Board[]>([]);
   const isMobile = useIsMobile();
 
-  const menuTypeEnums = useMemo(() => {
-    return MENU_TYPE_LIST.reduce(
-      (acc, type) => {
-        acc[type.label] = type.id;
+  useEffect(() => {
+    fetch(new URL("/api/pages", baseurl))
+      .then((res) => res.json())
+      .then((data) => setBoards(data))
+      .catch(console.error);
+  }, []);
+
+  const boardEnums = useMemo(() => {
+    return boards.reduce(
+      (acc, board) => {
+        acc[board.name] = board.id;
         return acc;
       },
       {} as Record<string, string>,
     );
-  }, []);
+  }, [boards]);
 
   const menuFieldModel = useMemo(() => {
-    const isChildMenu = !!selectedMenu?.parent_id;
-
     const fields: Record<string, FieldModel> = {
       title: {
         name: "제목",
@@ -56,27 +69,25 @@ export default function MenuConfigure({ menuConfigure }: MenuConfigureProps) {
         name: "아이콘",
         type: "icon",
       },
+      board_id: {
+        name: "게시판",
+        type: "enum",
+        enums: boardEnums,
+      },
+      hidden: {
+        name: "숨김",
+        type: "boolean",
+      },
     };
 
-    if (!isChildMenu) {
-      fields.type = {
-        name: "타입",
-        type: "enum",
-        enums: menuTypeEnums,
-      };
-    }
-
-    fields.hidden = { name: "숨김", type: "boolean" };
-
     return fields;
-  }, [selectedMenu, menuTypeEnums]);
+  }, [boardEnums]);
 
   const handleAddMenu = () => {
     const menu: MenuItem = {
       id: guid({ length: 11 }),
       title: "새 메뉴",
-      type: "home",
-      url: "/",
+      url: "#",
     };
     setMenuList((prev) => [...prev, { ...menu, order: prev.length }]);
   };
@@ -89,9 +100,9 @@ export default function MenuConfigure({ menuConfigure }: MenuConfigureProps) {
 
       if (menuConfigure?.id) {
         Object.assign(body, { id: menuConfigure.id });
-        await fetch("/api/menu", { method: "PUT", body: JSON.stringify(body) });
+        await fetch(new URL("/api/menu", baseurl), { method: "PUT", body: JSON.stringify(body) });
       } else {
-        await fetch("/api/menu", { method: "POST", body: JSON.stringify(body) });
+        await fetch(new URL("/api/menu", baseurl), { method: "POST", body: JSON.stringify(body) });
       }
 
       router.refresh();
@@ -138,59 +149,16 @@ export default function MenuConfigure({ menuConfigure }: MenuConfigureProps) {
 
       const updated = { ...prev, [fieldKey]: value } as MenuItem;
 
-      if (fieldKey === "type" && typeof value === "string") {
-        const menuType = getMenuType(value);
-        if (menuType) {
-          updated.title = menuType.label;
-          updated.icon = menuType.icon;
-
-          if (menuType.hasChildren) {
-            updated.url = undefined;
-          } else {
-            updated.url = menuType.url || undefined;
-          }
+      if (fieldKey === "board_id" && typeof value === "string") {
+        const board = boards.find((b) => b.id === value);
+        if (board) {
+          updated.title = board.name;
+          updated.url = `/boards/${board.slug}`;
         }
       }
 
       return updated;
     });
-  };
-
-  const handleAddChildMenu = (parentId: string, parentMenuType: string) => {
-    const menuType = getMenuType(parentMenuType);
-    if (!menuType?.hasChildren) return;
-
-    const slug = guid({ length: 11 });
-    const url = generateChildUrl(parentMenuType, slug);
-
-    const childMenu: MenuItem = {
-      id: guid({ length: 11 }),
-      title: "새 하위메뉴",
-      parent_id: parentId,
-      slug,
-      url,
-    };
-
-    const addChildToTree = (items: MenuItem[]): MenuItem[] => {
-      return items.map((item) => {
-        if (item.id === parentId) {
-          const children = item.children || [];
-          return {
-            ...item,
-            children: [...children, { ...childMenu, order: children.length }],
-          };
-        }
-        if (item.children) {
-          return {
-            ...item,
-            children: addChildToTree(item.children),
-          };
-        }
-        return item;
-      });
-    };
-
-    setMenuList((prev) => addChildToTree(prev));
   };
 
   const handleDeleteMenu = (menuId: string) => {
@@ -237,9 +205,6 @@ export default function MenuConfigure({ menuConfigure }: MenuConfigureProps) {
     ));
   };
 
-  const selectedMenuType = selectedMenu?.type ? getMenuType(selectedMenu.type) : null;
-  const canAddChild = selectedMenuType?.hasChildren && !selectedMenu?.parent_id;
-
   return (
     <div className="flex h-full w-full">
       <div className="flex h-full w-full">
@@ -273,16 +238,6 @@ export default function MenuConfigure({ menuConfigure }: MenuConfigureProps) {
               <DrawerTitle />
               <DrawerContent className="flex flex-col gap-2 p-2">
                 {renderFields()}
-                {canAddChild && (
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="mt-4"
-                    onClick={() => handleAddChildMenu(selectedMenu.id, selectedMenu.type!)}
-                  >
-                    하위메뉴 추가
-                  </Button>
-                )}
                 <Button
                   variant="destructive"
                   size="sm"
@@ -295,15 +250,6 @@ export default function MenuConfigure({ menuConfigure }: MenuConfigureProps) {
           ) : (
             <div className="flex flex-1 flex-col gap-2 p-2">
               {renderFields()}
-              {canAddChild && (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => handleAddChildMenu(selectedMenu.id, selectedMenu.type!)}
-                >
-                  하위메뉴 추가
-                </Button>
-              )}
               <Button
                 variant="destructive"
                 size="sm"

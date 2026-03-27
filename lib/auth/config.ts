@@ -1,12 +1,14 @@
 import { DrizzleAdapter } from "@auth/drizzle-adapter";
 import { eq } from "drizzle-orm";
-import type { NextAuthConfig, Session } from "next-auth";
+import type { NextAuthConfig } from "next-auth";
+import { SignJWT } from "jose";
 import CredentialsProvider from "next-auth/providers/credentials";
 import Google from "next-auth/providers/google";
 import Naver from "next-auth/providers/naver";
 import { authorize } from "@/lib/auth/authorization";
 import { writeDb } from "@/lib/db";
 import { accounts, users } from "@/lib/db/schema/users";
+import { roles } from "@/lib/db/schema/roles";
 
 export type NextAuthPageSearchParams = Promise<{ callbackUrl?: string }>;
 
@@ -15,7 +17,7 @@ export interface Credentials {
   password: string;
 }
 
-// const secret = new TextEncoder().encode(process.env.AUTH_SECRET || "secret");
+const secret = new TextEncoder().encode(process.env.AUTH_SECRET!);
 
 const authConfig = {
   session: { strategy: "jwt" },
@@ -56,10 +58,34 @@ const authConfig = {
     error: "/error",
   },
   callbacks: {
-    jwt: async ({ token, user }) => ({ ...token, ...user }),
-    session: ({ session, token: { refresh_token, password, salt, ...user } }): Session => {
+    jwt: async ({ token, user }) => {
+      if (user?.id) {
+        const result = await writeDb
+          .select({ role: roles.name })
+          .from(users)
+          .innerJoin(roles, eq(users.role_id, roles.id))
+          .where(eq(users.id, user.id))
+          .then((rows) => rows[0]);
+
+        return { ...token, ...user, role: result?.role };
+      }
+      return token;
+    },
+    session: async ({ session, token: { refresh_token, password, salt, ...user } }) => {
       if (!!user?.image && !(user.image as string).includes("http"))
         Object.assign(user, { image: `/api/files${user.image}` });
+
+      session.access_token = await new SignJWT({
+        sub: user.sub,
+        id: user.id,
+        email: user.email,
+        name: user.name,
+        role: user.role,
+      })
+        .setProtectedHeader({ alg: "HS256" })
+        .setIssuedAt()
+        .setExpirationTime("1d")
+        .sign(secret);
 
       return Object.assign(session, { user });
     },

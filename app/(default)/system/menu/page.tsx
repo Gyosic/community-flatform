@@ -4,7 +4,7 @@ import { app } from "@/config";
 const getMenu = async () => {
   const res = await fetch(new URL("/api/menu", app.baseurl), { method: "GET" });
 
-  const data = await res.json();
+  const { data } = await res.json();
 
   return data;
 };
@@ -12,5 +12,5 @@ const getMenu = async () => {
 export default async function SystemMenu() {
   const menu = await getMenu();
 
-  return <MenuConfigure menuConfigure={menu} />;
+  return <MenuConfigure menuConfigure={menu} baseurl={app.baseurl} />;
 }

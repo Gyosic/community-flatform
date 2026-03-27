@@ -1,10 +1,11 @@
 "use client";
 
 import type { ControllerRenderProps, FieldPath, FieldValues } from "react-hook-form";
+import { AvatarField } from "@/components/form/fields/AvatarField";
 import { BooleanField } from "@/components/form/fields/BooleanField";
 import { ComboboxField } from "@/components/form/fields/ComboboxField";
 import { DateField } from "@/components/form/fields/DateField";
-import { FieldField } from "@/components/form/fields/FileField";
+import { FileField } from "@/components/form/fields/FileField";
 import { IconField } from "@/components/form/fields/IconField";
 import { NumberField } from "@/components/form/fields/NumberField";
 import { PasswordField } from "@/components/form/fields/PasswordField";
@@ -44,7 +45,9 @@ export function TemplateFormItem<T extends FieldValues, K extends FieldPath<T>>(
     case "enum":
       return <ComboboxField {...props} />;
     case "file":
-      return <FieldField {...props} />;
+      return <FileField {...props} />;
+    case "avatar":
+      return <AvatarField {...props} />;
     case "radio":
       return <RadioField {...props} />;
     case "datetime-local":

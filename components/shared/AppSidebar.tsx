@@ -27,11 +27,12 @@ interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
   user?: {
     email: string;
     name: string;
-    avatar: string;
+    image?: string;
     role?: string;
   };
   siteName?: string;
   logo?: FileType | null;
+  baseurl: string;
 }
 
 const ADMIN_ROLES = ["sysadmin", "admin"];
@@ -41,9 +42,11 @@ export function AppSidebar({
   user,
   siteName = "Community",
   logo,
+  baseurl,
   ...props
 }: AppSidebarProps) {
   const isAdmin = user?.role && ADMIN_ROLES.includes(user.role);
+  console.info(user);
 
   const systemMenuGroup: MenuGroup = {
     label: "시스템",
@@ -124,9 +127,7 @@ export function AppSidebar({
       <SidebarContent>
         <NavMain items={menu} />
       </SidebarContent>
-      <SidebarFooter>
-        <NavUser user={user} />
-      </SidebarFooter>
+      <SidebarFooter>{!!user && <NavUser user={user} baseurl={baseurl} />}</SidebarFooter>
       <SidebarRail />
     </Sidebar>
   );

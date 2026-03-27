@@ -48,7 +48,7 @@ export function Postlist({
   boardType,
   session,
 }: PostlistProps) {
-  // const router = useRouter();
+  const router = useRouter();
   const isMobile = useIsMobile();
   const basepath = "/api/posts";
 
@@ -134,7 +134,7 @@ export function Postlist({
           </Button>
         </div>
         {!!session && (
-          <Button type="button">
+          <Button type="button" onClick={() => router.push("/posts/write")}>
             <Pencil />
           </Button>
         )}
@@ -177,6 +177,7 @@ export function Postlist({
   );
 }
 
+import { useRouter } from "next/navigation";
 import { Session } from "next-auth";
 import {
   Item,

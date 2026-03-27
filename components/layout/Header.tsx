@@ -3,6 +3,7 @@
 import { Bell, LogOut, Search, Settings, User } from "lucide-react";
 import Link from "next/link";
 import { signOut } from "next-auth/react";
+import { AppTopbar } from "@/components/shared/AppTopbar";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -30,16 +31,19 @@ export function Header({ siteName = "Community", user }: HeaderProps) {
       <div className="flex w-full items-center justify-between gap-2 px-4">
         <div className="flex items-center">
           <SidebarTrigger className="-ml-1" />
+
+          {/* 네비게이션 바 */}
+          {/* <AppTopbar /> */}
         </div>
 
         <div className="flex items-center gap-2">
           {/* 검색 */}
-          <div className="flex-1 md:w-64 md:flex-initial">
+          {/* <div className="flex-1 md:w-64 md:flex-initial">
             <div className="relative">
               <Search className="absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
               <Input type="search" placeholder="검색..." className="pl-10" />
             </div>
-          </div>
+          </div> */}
 
           {/* 사용자 영역 */}
           <div className="flex items-center gap-2">
@@ -91,10 +95,10 @@ export function Header({ siteName = "Community", user }: HeaderProps) {
             ) : (
               <>
                 <Button variant="ghost" size="sm" asChild>
-                  <Link href="/login">로그인</Link>
+                  <Link href="/signin">로그인</Link>
                 </Button>
                 <Button size="sm" asChild>
-                  <Link href="/register">회원가입</Link>
+                  <Link href="/signup">회원가입</Link>
                 </Button>
               </>
             )}

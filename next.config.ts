@@ -9,6 +9,12 @@ const nextConfig: NextConfig = {
     authInterrupts: true,
     // ppr: "incremental",
   },
+  webpack: (config, { dev }) => {
+    if (dev) {
+      config.devtool = "eval";
+    }
+    return config;
+  },
 };
 
 export default nextConfig;

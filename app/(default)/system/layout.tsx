@@ -6,7 +6,7 @@ const ADMIN_ROLES = ["sysadmin", "admin"];
 export default async function SystemLayout({ children }: { children: React.ReactNode }) {
   const session = await auth();
 
-  if (!session?.user) redirect("/login");
+  if (!session?.user) redirect("/signin");
 
   const userRole = session.user.role;
   if (!userRole || !ADMIN_ROLES.includes(userRole)) redirect("/");
